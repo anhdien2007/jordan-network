@@ -1,0 +1,770 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Packet Patrol 3D | PING-BOT Adventure</title><style>
+:root{font-family:system-ui,Segoe UI,Arial,sans-serif;background:#071321;color:#e9f6ff}*{box-sizing:border-box}body{margin:0;overflow:hidden}canvas{width:100vw;height:100vh;display:block;background:#071827;touch-action:none}button,input,textarea{font:inherit}button{cursor:pointer;border:1px solid #3c6782;color:#effbff;background:#18304b;border-radius:8px;padding:10px 14px}button:hover{background:#275577}.primary{background:#00a6c2;color:#001a24;border-color:#73edff;font-weight:800}.primary:hover{background:#62e8fa}.panel{background:#071827ee;border:1px solid #386282;border-radius:14px;box-shadow:0 12px 35px #0007;backdrop-filter:blur(9px)}#hud{position:fixed;left:16px;top:16px;width:min(340px,55vw);padding:16px;pointer-events:none}#hud h1{font-size:23px;color:#6ae7ff;margin:0 0 2px;letter-spacing:2px}#hud small{letter-spacing:2px;color:#a7d0dc}#hud h3{font-size:12px;letter-spacing:2px;margin:18px 0 10px;color:#8bd7fa}#tasks{display:grid;gap:8px}.task{display:flex;align-items:center;gap:9px;font-size:13px}.task i{display:grid;place-items:center;width:19px;height:19px;border:1px solid #577b94;border-radius:6px;font-style:normal}.task.done i{background:#087e6b;border-color:#64ffc6}#meter{height:9px;background:#24415b;border-radius:20px;margin:16px 0 7px;overflow:hidden}#bar{height:100%;background:linear-gradient(90deg,#00c9cf,#8cfec4);width:0%;transition:width .3s}#stats{font-size:12px;color:#bfe7fa}#right{position:fixed;right:16px;top:16px;max-width:235px;padding:14px;font-size:12px;line-height:1.8}kbd{background:#233b53;border:1px solid #5b8197;border-radius:4px;padding:2px 5px}#right strong{color:#8deaff;letter-spacing:1px}#bottom{position:fixed;bottom:18px;left:18px;display:flex;gap:10px;align-items:center}#prompt{position:fixed;left:50%;bottom:60px;transform:translateX(-50%);background:#042d40f0;border:1px solid #72e4f7;border-radius:11px;padding:12px 18px;display:none;font-weight:800;text-align:center}#toast{position:fixed;top:80px;left:50%;transform:translateX(-50%);background:#10405a;border:1px solid #76d7ff;border-radius:9px;padding:11px 20px;display:none;max-width:90vw;text-align:center;z-index:5}#badge{position:fixed;bottom:18px;right:20px;color:#a3c6d4;font-size:11px}#overlay,#welcome{position:fixed;inset:0;background:#020a15cb;display:flex;align-items:center;justify-content:center;padding:16px;z-index:10}#overlay{display:none}#modal{width:min(870px,100%);max-height:95vh;overflow:auto;padding:22px}#modalHead{display:flex;justify-content:space-between;gap:12px;align-items:center}#modalHead h2{margin:0;color:#70eaff;font-size:20px}#desc{font-size:13px;color:#a6cadb;margin:8px 0 14px}#terminal{background:#030d13;border:1px solid #316474;border-radius:9px;height:245px;overflow:auto;padding:14px;white-space:pre-wrap;overflow-wrap:anywhere;font:13px/1.55 ui-monospace,SFMono-Regular,Consolas,monospace;color:#a9faca}#cmdForm{display:flex;gap:8px;margin-top:11px}#cmd{flex:1;min-width:0;background:#0b2232;border:1px solid #47708d;color:white;border-radius:9px;padding:12px;font:13px Consolas,monospace;resize:vertical;min-height:44px}.actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}#helper{background:#132d43;border-left:3px solid #62ddff;padding:11px;margin-top:13px;min-height:50px;font-size:13px}#portPanel{display:none;margin:10px 0 14px;background:#13283b;padding:12px;border-radius:10px;border:1px solid #3b6784}#portList{display:grid;grid-template-columns:repeat(8,1fr);gap:7px;margin:10px 0}.port{padding:6px 1px;border-radius:4px;border:1px solid #5d7b89;background:#06131c;text-align:center;font-size:10px;min-width:0}.port:before{content:'';display:block;width:8px;height:5px;margin:2px auto 4px;background:#48ef9a;border-radius:4px;box-shadow:0 0 5px #18c98d}.port.down:before{background:#f76562;box-shadow:0 0 5px #d11}.port.selected{outline:2px solid #67e4ff}.port span{color:#b4d4e6}#rackStatus{font-size:12px;color:#cbe7f6}#welcome .card{max-width:620px;padding:32px;background:linear-gradient(140deg,#102c47,#081725);border:1px solid #4e97b2;border-radius:20px;text-align:center;box-shadow:0 30px 80px #0009}#welcome h2{font-size:35px;line-height:1.1;margin:12px 0;color:white}#welcome p{color:#c3dfef;line-height:1.6}#welcome .eyebrow{color:#67e9ff;letter-spacing:3px;font-size:12px}#mobile{display:none;position:fixed;right:15px;bottom:45px;gap:8px;align-items:end}#pad{display:grid;grid-template-columns:repeat(3,45px);gap:4px}#pad button{padding:9px 0;touch-action:none}#use{background:#087d9a}#botTalk{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);display:flex;gap:10px;align-items:center;border:1px solid #32cbe4;border-radius:14px;background:#052a40ed;padding:11px 16px;box-shadow:0 0 22px #16cbf533;max-width:min(460px,60vw);font-size:12px;pointer-events:none}#botTalk b{white-space:nowrap;color:#76f5ff}#botTalk span{color:#ecfaff}#win{display:none;color:#9fffd7;font-weight:900;margin:10px 0;font-size:17px}@media(max-width:700px){#right{display:none}#hud{left:8px;top:8px;padding:10px;width:210px}#hud h1{font-size:16px}#hud h3{margin:9px 0 5px}.task{font-size:10px;gap:4px}#bottom{bottom:6px;left:6px}#badge{display:none}#mobile{display:flex}#modal{padding:12px}#terminal{height:180px;font-size:11px}#portList{grid-template-columns:repeat(6,1fr)}#welcome h2{font-size:26px}#botTalk{bottom:110px;left:8px;right:8px;transform:none;max-width:none;padding:8px;font-size:11px}}
+
+#guide{position:fixed;top:18px;left:50%;transform:translateX(-50%);padding:12px 18px;width:350px;text-align:center;pointer-events:none}#guide b{color:#73f4d0;font-size:12px;letter-spacing:1px}#guide p{margin:5px 0;font-size:13px}#guide small{color:#b1cedd}#mapPanel{position:fixed;right:16px;bottom:58px;width:300px;padding:13px}#mapPanel h3{font-size:12px;margin:0 0 8px;color:#7beaff}#mapPanel svg{width:100%;height:100px}#links{font-size:11px;line-height:1.7;color:#b8d6e3}#bottom{flex-wrap:wrap;max-width:390px}#botTalk{bottom:22px;max-width:420px}#right{top:185px}#hud .task{font-size:12px}#hud #tasks{gap:5px}#hud h3{margin-top:12px}#badge{display:none}@media(max-width:900px){#guide{top:10px;left:auto;right:8px;transform:none;width:210px;padding:10px}#right{display:none}#mapPanel{right:8px;bottom:165px;width:210px}#bottom{max-width:250px;gap:4px}#bottom button{font-size:11px;padding:7px}#botTalk{bottom:105px;left:8px;right:8px;transform:none;max-width:none}}@media(max-width:550px){#hud{width:185px}#hud h1{font-size:13px}#hud small{font-size:9px}#hud .task{font-size:9px}#guide{width:180px}#guide p{font-size:11px}#mapPanel{width:180px;bottom:210px}#mapPanel svg{height:65px}#links{font-size:9px}#botTalk{bottom:145px}#mobile{bottom:8px}#prompt{bottom:190px;font-size:11px;padding:8px}#bottom{max-width:180px}}
+@media(max-width:550px){#hud #tasks,#hud h3{display:none}#hud #meter{margin-top:10px}#hud #win{font-size:12px}#mapPanel{bottom:235px}#toast{top:155px;font-size:11px}#botTalk{font-size:10px}}#links{white-space:pre-line}#toast{top:125px}@media(max-width:550px){#toast{top:215px}#mapPanel h3{font-size:10px}}
+:root{font-family:"Segoe UI",system-ui,sans-serif}button{background:linear-gradient(180deg,#254555,#173140);border-color:#58798380;box-shadow:0 3px 9px #0003;transition:background .15s,transform .15s}button:hover{background:#366272;transform:translateY(-1px)}button:active{transform:translateY(1px)}button:focus-visible{outline:2px solid #ffda8c;outline-offset:3px}.panel{background:linear-gradient(135deg,#102936ed,#091b27ed);border:1px solid #739eab60;box-shadow:0 14px 40px #0004;border-radius:16px}#hud{width:260px;padding:16px}#hud h1{font-size:17px;letter-spacing:1px}#hud small{font-size:10px}#hud h3,#hud #tasks{display:none}.showObjectives #hud h3,.showObjectives #hud #tasks{display:grid}#hud #meter{margin-top:13px}#right{display:none}#guide{width:360px;border-top:2px solid #e7c48a}#guide b{color:#e7c48a}#mapPanel{width:240px;bottom:110px}#mapPanel svg{height:85px}#bottom{max-width:550px;gap:6px;bottom:18px}#bottom button{padding:8px 11px;font-size:12px}#botTalk{bottom:18px;max-width:410px;font-size:11px;left:auto;right:18px;transform:none}#prompt{bottom:100px;background:#102e35ed;color:#ffe1a4;border-color:#b9a27a;letter-spacing:1px;font-size:13px}#preferences{position:fixed;right:18px;top:145px;width:260px;padding:18px;z-index:8}#preferences[hidden]{display:none}#preferences strong{font-size:12px;color:#ffe0a0}#preferences label{display:block;margin-top:16px;font-size:13px}#preferences input[type=range]{display:block;width:100%;accent-color:#6ae3c6;margin-top:8px}#preferences p{font-size:12px;color:#acd0d8;line-height:1.6}#welcome .card{background:linear-gradient(145deg,#214b59,#0b202f);border-color:#9fc9cb66}#welcome h2{font-size:44px;letter-spacing:-1.5px}.primary{background:#efd19b;color:#1c2e34;border-color:#ffe7bc}.primary:hover{background:#ffe2ae}#terminal{box-shadow:inset 0 0 35px #00141b}#toast{top:140px;border-color:#b9d6c080;background:#17403f}
+@media(max-width:900px){#hud{width:210px}#guide{width:260px}#botTalk{max-width:340px;bottom:90px}#mapPanel{bottom:165px}#bottom{max-width:380px}}@media(max-width:550px){#hud{width:155px;padding:10px;left:8px;top:8px}#hud h1{font-size:11px}#hud small{font-size:8px;letter-spacing:1px}#stats{font-size:10px}#guide{width:210px;right:8px;top:8px;padding:9px}#guide b{font-size:10px}#guide small{font-size:10px}#guide p{font-size:11px}#mapPanel{width:155px;bottom:195px;padding:9px}#mapPanel svg{height:54px}#links{font-size:8px}#bottom{max-width:185px;bottom:8px;left:6px;gap:3px}#bottom button{padding:6px;font-size:10px}#botTalk{bottom:145px;left:8px;right:8px;max-width:none;font-size:10px}#prompt{bottom:185px;font-size:10px}#preferences{top:145px;right:8px;width:230px}#welcome h2{font-size:32px}#toast{top:135px}.showObjectives #hud #tasks{display:grid}#mobile{bottom:12px}#hud #win{font-size:10px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+select{font:inherit;color:#e0f5f7;background:#163746;border:1px solid #648b96;border-radius:8px;padding:9px;max-width:100%}#preferences select{display:block;width:100%;margin-top:8px}.viewChoice{display:block;color:#b9d5dc;font-size:13px;margin:18px 0}.viewChoice select{display:block;margin:8px auto 0}#preferences{max-height:75vh;overflow:auto}#viewBtn{border-color:#e8c58a;color:#ffe2a9}#bottom{max-width:720px}#welcome .card{max-height:94vh;overflow:auto}#welcome p{font-size:14px}#guide{pointer-events:none}#toast{pointer-events:none}@media(max-width:550px){#bottom{left:6px;right:6px;bottom:6px;max-width:none;flex-wrap:nowrap;overflow-x:auto;padding:4px 2px 8px;scrollbar-width:thin;scrollbar-color:#6eb6bb #102936;background:#0a2131db;border-radius:10px}#bottom button{flex-shrink:0;padding:8px;font-size:11px}#mobile{bottom:62px}#botTalk{bottom:195px}#mapPanel{bottom:245px}#prompt{bottom:230px}}
+#hud #campusSummary small{letter-spacing:0;line-height:1.5}#hud #campusSummary{line-height:1.5}@media(max-width:550px){#hud #campusSummary{padding-top:8px;margin-top:8px;font-size:9px}#hud #campusSummary b{font-size:9px}#hud #campusSummary span,#hud #campusSummary small,#hud #campusSummary br{display:none}}</style></head><body><canvas id="game" aria-label="Interactive 3D network training lab"></canvas><aside id="hud" class="panel"><h1>◈ Jordan Networking</h1><small>PING-BOT · IT SUPPORT CAMPUS</small><h3>MISSION: RESTORE CONNECTIVITY</h3><div id="tasks"></div><div id="meter"><div id="bar"></div></div><div id="stats"></div><div id="win">★ LAB RESTORED!</div></aside><aside id="right" class="panel"><strong>TECHNICIAN CONTROLS</strong><div><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> Walk</div><div><kbd>Shift</kbd> Sprint</div><div><kbd>E</kbd> Inspect nearby device</div><div><kbd>←</kbd><kbd>→</kbd> Rotate camera</div><div>Drag: look around · C: recenter · Scroll: field of view</div><div style="margin-top:12px;color:#b0d4e5">Approach equipment, inspect realistic port indicators, then configure it in the practice terminal.</div></aside><div id="botTalk" aria-live="polite"><b>🤖 PING-BOT</b><span id="botMessage">Hi! I am Ping. Let’s repair this network!</span></div><div id="bottom"><button id="soundBtn" aria-label="Toggle sound">🔊 Sound ON</button><button id="reset">↻ Reset lab</button><button id="cameraBtn">◉ Rotate view</button></div><aside id="guide" class="panel"><b id="roomName">OPERATIONS OFFICE</b><p id="nextTask"></p><small id="distance"></small></aside><aside id="mapPanel" class="panel"><h3>LIVE LAB MAP | NORTH UP</h3><svg viewBox="0 0 280 110" aria-label="Live six-room campus map"><g fill="#173b50" stroke="#4592a5"><rect x="2" y="8" width="38" height="90" rx="3"/><text x="21.0" y="23" text-anchor="middle" fill="#c5edf5" stroke="none" font-size="8">CORE</text><rect x="41" y="8" width="67" height="90" rx="3"/><text x="74.5" y="23" text-anchor="middle" fill="#c5edf5" stroke="none" font-size="8">OFFICE</text><rect x="109" y="8" width="37" height="90" rx="3"/><text x="127.5" y="23" text-anchor="middle" fill="#c5edf5" stroke="none" font-size="8">LAB</text><rect x="147" y="8" width="44" height="90" rx="3"/><text x="169.0" y="23" text-anchor="middle" fill="#c5edf5" stroke="none" font-size="8">HUB</text><rect x="192" y="8" width="40" height="90" rx="3"/><text x="212.0" y="23" text-anchor="middle" fill="#c5edf5" stroke="none" font-size="8">SYS</text><rect x="233" y="8" width="45" height="90" rx="3"/><text x="255.5" y="23" text-anchor="middle" fill="#c5edf5" stroke="none" font-size="8">LIB</text></g><path d="M20 71H260" stroke="#72e7db" stroke-width="6" opacity=".35"/><circle id="mapTarget" r="4" fill="#ffd16e"/><circle id="mapPlayer" r="3.5" fill="#7af6ff" stroke="white"/></svg><div id="links"></div></aside><div id="badge">100% OFFLINE · Educational networking simulator (not Cisco IOS)</div><div id="prompt"></div><div id="toast"></div><div id="mobile"><div id="pad"><span></span><button data-key="w">▲</button><span></span><button data-key="a">◀</button><button data-key="s">▼</button><button data-key="d">▶</button></div><button id="use">USE</button></div><div id="overlay"><section id="modal" class="panel"><div id="modalHead"><h2 id="modalTitle">DEVICE</h2><button id="close">✕ Close</button></div><p id="desc"></p><div id="portPanel"><strong>LIVE SWITCH PORT INSPECTION</strong><div id="portList"></div><div id="rackStatus"></div><div style="margin-top:9px"><button id="cableBtn">🔌 Connect uplink cable</button></div></div><div id="terminal" role="log" aria-live="polite"></div><form id="cmdForm"><textarea id="cmd" rows="1" aria-label="Network simulator command" autocomplete="off" spellcheck="false" placeholder="Type a command, then press Enter ↵"></textarea><button class="primary" type="submit">Run / Enter ↵</button></form><div style="font-size:12px;color:#8deaff;margin-top:7px">Press <kbd>Enter</kbd> to execute each command. Use ↑ to recall previous commands.</div><div class="actions"><button id="diagnose">🔎 Diagnose</button><button id="hint">💡 Hint</button><button id="commands">⌨ Commands</button></div><div id="helper">Inspect the device to begin.</div></section></div><div id="welcome"><section class="card"><div class="eyebrow">IT SUPPORT CAMPUS · OFFLINE</div><h2>Small robot. Big heart.</h2><p>Step inside PING-BOT and explore six connected spaces, meet students and staff, and help them get back to what matters. Listen to their stories, investigate real symptoms, and practise networking and system administration in a safe simulated campus.</p><p><strong>Make someone’s day:</strong> restore a connection, rescue a print job, unlock an account, recover disk space, or restore access to a project. Ask questions, find evidence, and let the customer confirm the fix. There is time to learn—no countdown.</p><label class="viewChoice">Choose your view <select id="welcomeView"><option value="first">First person - through robot eyes</option><option value="robot">Robot view - follow PING-BOT</option></select></label><button class="primary" id="start">ENTER THE LAB →</button></section></div>
+<script>
+'use strict';
+// Self-contained perspective 3D renderer: no remote packages, no browser WebGL requirement.
+const $=id=>document.getElementById(id),canvas=$('game'),ctx=canvas.getContext('2d');let W=0,H=0,dpr=1;
+function resize(){dpr=Math.min(devicePixelRatio||1,2);W=innerWidth;H=innerHeight;canvas.width=Math.floor(W*dpr);canvas.height=Math.floor(H*dpr);ctx.setTransform(dpr,0,0,dpr,0,0)}addEventListener('resize',resize);resize();
+const player={x:26,z:3.6,dir:Math.PI},keys=new Set();let yaw=.25,zoom=12,started=false,active=null,mode='user',history=[],historyIndex=0,selectedPort=1,opened=false,tick=0,toastTimer;const state={cable:false,sw:false,router:false,pc:false,ping:false};const mission=[['cable','Connect the switch uplink cable'],['sw','Enable switch uplink Fa0/1'],['router','Configure R1 default route'],['pc','Correct PC1 default gateway'],['ping','Verify connectivity with ping']];const objects=[{id:'sw',x:-15.5,z:-2.25,title:'SW1 · 24-PORT MANAGED SWITCH',desc:'Rack A · switch interfaces · simulated Cisco-style CLI',hint:'Reconnect the cable and run enable → configure terminal → interface fa0/1 → no shutdown.',diag:'SW1 FastEthernet0/1 is administratively down; the uplink cable is unplugged.'},{id:'router',x:-13.3,z:-1.25,title:'R1 · EDGE ROUTER',desc:'Rack A · gateway router · simulated Cisco-style CLI',hint:'Run enable → configure terminal → ip route 0.0.0.0 0.0.0.0 192.168.10.1',diag:'Gateway of last resort is not configured. Use show ip route.'},{id:'pc',x:13,z:-1.6,title:'PC1 · STUDENT WORKSTATION',desc:'Workstation · Windows-style networking command practice',hint:'Run netsh interface ipv4 set address name="Ethernet" static 192.168.10.10 255.255.255.0 192.168.10.254',diag:'Default gateway has been configured incorrectly. Use ipconfig /all.'}];
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));let soundEnabled=true,audioCtx;function tone(freq=440,duration=.10,type='sine',volume=.045){if(!soundEnabled)return;try{audioCtx=audioCtx||new (window.AudioContext||window.webkitAudioContext)();if(audioCtx.state==='suspended')audioCtx.resume();const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type=type;o.frequency.setValueAtTime(freq,audioCtx.currentTime);g.gain.setValueAtTime(volume,audioCtx.currentTime);g.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+duration);o.connect(g);g.connect(audioCtx.destination);o.start();o.stop(audioCtx.currentTime+duration)}catch(e){}}function robotSay(message){$('botMessage').textContent=message;}
+$('soundBtn').onclick=()=>{soundEnabled=!soundEnabled;$('soundBtn').textContent=soundEnabled?'🔊 Sound ON':'🔇 Sound OFF';if(soundEnabled)tone(630,.13)};
+function toast(t){tone(t.includes('XP')?720:380,.11,'triangle');robotSay(t);$('toast').textContent=t;$('toast').style.display='block';clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('toast').style.display='none',2800)}function refresh(){let done=0;$('tasks').replaceChildren(...mission.map(([k,t])=>{const d=document.createElement('div');d.className='task'+(state[k]?' done':'');const i=document.createElement('i');i.textContent=state[k]?'✓':'○';d.append(i,document.createTextNode(t));if(state[k])done++;return d}));$('bar').style.width=Math.round(done/mission.length*100)+'%';$('stats').textContent='Connectivity: '+Math.round(done/mission.length*100)+'%  ·  XP: '+(done*200)+' / '+(mission.length*200);$('win').style.display=done===mission.length?'block':'none';drawPorts()}function drawPorts(){const holder=$('portList');holder.replaceChildren();for(let i=1;i<=24;i++){const b=document.createElement('button');b.className='port'+(i===1&&(!state.cable||!state.sw)?' down':'')+(i===selectedPort?' selected':'');b.title='FastEthernet0/'+i;b.innerHTML='<span>'+i+'</span>';b.onclick=()=>{selectedPort=i;drawPorts();$('rackStatus').textContent=i===1?'Fa0/1: '+(state.cable?'Cable connected':'Cable disconnected')+' · '+(state.sw?'interface up':'administratively down'):'Fa0/'+i+': link up · access port';};holder.appendChild(b)}$('cableBtn').textContent=state.cable?'✓ Uplink cable connected':'🔌 Connect uplink cable';$('cableBtn').disabled=state.cable;$('rackStatus').textContent='Fa0/1: '+(state.cable?'Cable connected':'Cable disconnected')+' · '+(state.sw?'interface enabled':'administratively down')}
+refresh();
+// Custom camera basis / perspective projection. The scene uses real x/y/z coordinates and depth sorting.
+let eye,forward,right,up,polys=[],roomPolys=[],floorPolys=[],modelTransform=null;const cameraFollow={x:26,z:3.6};function sub(a,b){return [a[0]-b[0],a[1]-b[1],a[2]-b[2]]}function norm(v){let n=Math.hypot(...v)||1;return v.map(x=>x/n)}function cross(a,b){return[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]]}function dot(a,b){return a[0]*b[0]+a[1]*b[1]+a[2]*b[2]}let viewMode="first",lookPitch=-.10,movingAmount=0,reducedMotion=matchMedia('(prefers-reduced-motion: reduce)').matches;
+function setupCamera(){if(viewMode==='robot'){const distance=zoom*.75;eye=[cameraFollow.x+Math.sin(yaw)*distance,distance*.78+1.5,cameraFollow.z+Math.cos(yaw)*distance];forward=norm(sub([cameraFollow.x,.9,cameraFollow.z],eye));right=norm(cross(forward,[0,1,0]));up=norm(cross(right,forward));return}const bob=reducedMotion?0:Math.sin(tick*11)*.018*movingAmount;eye=[player.x,1.68+bob,player.z];forward=norm([-Math.sin(yaw)*Math.cos(lookPitch),Math.sin(lookPitch),-Math.cos(yaw)*Math.cos(lookPitch)]);right=norm(cross(forward,[0,1,0]));up=norm(cross(right,forward))}
+function proj(v){const p=sub(v,eye),depth=dot(p,forward);if(depth<.079)return null;const f=(viewMode==='robot'?Math.min(W,H)*1.04:W/(2*Math.tan((72+(zoom-12)*3)*Math.PI/360)))/depth;return {x:W/2+dot(p,right)*f,y:H*.5-dot(p,up)*f,d:depth}}
+// Clip geometry against the eye plane before projection, including nearby walls.
+function clipNear(points){const out=[];for(let i=0;i<points.length;i++){const a=points[i],b=points[(i+1)%points.length],da=dot(sub(a,eye),forward)-.08,db=dot(sub(b,eye),forward)-.08;if(da>=0)out.push(a);if((da>=0)!==(db>=0)){const t=da/(da-db);out.push(a.map((v,j)=>v+(b[j]-v)*t))}}return out}
+function polygon(points,fill,stroke,thick=1){const clipped=clipNear(points.map(v=>modelTransform?modelTransform(v):v));if(clipped.length<3)return;const pts=clipped.map(proj);if(pts.some(p=>!p)||pts.every(p=>p.x< -80)||pts.every(p=>p.x>W+80)||pts.every(p=>p.y< -80)||pts.every(p=>p.y>H+80))return;polys.push({pts,fill,stroke,thick,depth:pts.reduce((a,p)=>a+p.d,0)/pts.length})}
+function quad(a,b,c,d,color,stroke){const nx=Math.ceil(Math.hypot(...sub(b,a))/2),nz=Math.ceil(Math.hypot(...sub(d,a))/2);if(nx*nz<=1){polygon([a,b,c,d],color,stroke);return}const at=(u,v)=>a.map((value,i)=>value+(b[i]-value)*u+(d[i]-value)*v);for(let i=0;i<nx;i++)for(let j=0;j<nz;j++)polygon([at(i/nx,j/nz),at((i+1)/nx,j/nz),at((i+1)/nx,(j+1)/nz),at(i/nx,(j+1)/nz)],color,stroke)}function box(x,y,z,w,h,d,cols=['#38566c','#456c82','#152b40','#1d4055','#2b4f63','#244155']){if(cols.length===1)cols=[tint(cols[0],1),tint(cols[0],.75),tint(cols[0],.66),tint(cols[0],.84),tint(cols[0],1.22),tint(cols[0],.55)];const x0=x-w/2,x1=x+w/2,y0=y-h/2,y1=y+h/2,z0=z-d/2,z1=z+d/2;quad([x0,y0,z1],[x1,y0,z1],[x1,y1,z1],[x0,y1,z1],cols[0]);quad([x1,y0,z0],[x0,y0,z0],[x0,y1,z0],[x1,y1,z0],cols[1]||cols[0]);quad([x0,y0,z0],[x0,y0,z1],[x0,y1,z1],[x0,y1,z0],cols[2]||cols[0]);quad([x1,y0,z1],[x1,y0,z0],[x1,y1,z0],[x1,y1,z1],cols[3]||cols[0]);quad([x0,y1,z1],[x1,y1,z1],[x1,y1,z0],[x0,y1,z0],cols[4]||cols[0]);quad([x0,y0,z0],[x1,y0,z0],[x1,y0,z1],[x0,y0,z1],cols[5]||cols[0])}
+function line3(a,b,color,width=2){a=modelTransform?modelTransform(a):a;b=modelTransform?modelTransform(b):b;const da=dot(sub(a,eye),forward),db=dot(sub(b,eye),forward);if(da<.08&&db<.08)return;if(da<.08){const t=(.08-da)/(db-da);a=a.map((v,i)=>v+(b[i]-v)*t)}else if(db<.08){const t=(.08-db)/(da-db);b=b.map((v,i)=>v+(a[i]-v)*t)}const pa=proj(a),pb=proj(b);if(!pa||!pb||(pa.x< -80&&pb.x< -80)||(pa.x>W+80&&pb.x>W+80)||(pa.y< -80&&pb.y< -80)||(pa.y>H+80&&pb.y>H+80))return;polys.push({line:[pa,pb],fill:color,thick:width,depth:(pa.d+pb.d)/2})}function floating(text,x,y,z,color='#bceeff',size=14){const p=proj([x,y,z]);if(!p||p.x< -200||p.x>W+200||p.y< -40||p.y>H+40)return;polys.push({text,p,fill:color,size,depth:p.d})}function ring(x,z,color){for(let i=0;i<40;i++){const a=i*Math.PI*2/40,b=(i+1)*Math.PI*2/40;line3([x+Math.cos(a)*.84,.03,z+Math.sin(a)*.84],[x+Math.cos(b)*.84,.03,z+Math.sin(b)*.84],color,2)}}
+function drawWorld(){polys=[];setupCamera();for(const [x,w,color] of [[-15.5,11,'#233c4d'],[0,20,'#405657'],[15.5,11,'#647278'],[27.5,13,'#5c6265'],[40,12,'#425966'],[52.5,13,'#68635a']]){if(viewMode==='first'||Math.cos(yaw)>=0)box(x,2,-8.5,w,4,.2,[color]);if(viewMode==='first'||Math.cos(yaw)<0)box(x,2,8.5,w,4,.2,[color]);}if(viewMode==='first'||Math.sin(yaw)>=0)box(-21,2,0,.2,4,17,['#1b3a51','#1b3a51','#1b3a51']);if(viewMode==='first'||Math.sin(yaw)<0)box(59,2,0,.2,4,17,['#1b3a51','#1b3a51','#1b3a51']);for(let i=-20;i<=58;i+=2)line3([i,.02,-8.3],[i,.02,8.2],'#3c596a',1);for(let i=-8;i<=8;i+=2)line3([-20.8,.03,i],[58.8,.03,i],'#3c596a',1);for(let i=-7;i<9;i+=5){box(i,2.5,-8.36,3,1.65,.09,['#3c7493','#3c7493','#3c7493']);box(i,2.5,-8.24,2.65,1.4,.07,['#0c253b','#0c253b','#0c253b'])}box(0,3.7,-8.1,8,.09,.09,['#2fe3ec']);
+// Keep tiled floors separate. Subdivided walls share depth order with equipment
+// so adjacent rooms are correctly occluded in first person.
+for(const x of [-10,10,21,34,46]){box(x,1.2,-3.2,.16,2.4,10.5,['#234458']);box(x,1.2,6.8,.16,2.4,3.4,['#234458']);}
+drawRoomMaterials();roomPolys=polys;polys=[];drawScenery();
+modelTransform=v=>[v[0]-9,v[1],v[2]];
+// rack chassis and rails; the front face carries 24 individually illuminated ports
+box(-5.4,1.76,-3.3,3,3.45,1.45,['#111e2c','#202d3c','#172638','#182b3b','#314758']);box(-5.4,1.8,-2.53,2.65,3.18,.10,['#030b13','#030b13','#030b13']);for(const x of [-6.71,-4.09])box(x,1.8,-2.40,.08,3.2,.08,['#8193a3']);for(let i=0;i<9;i++)line3([-6.65,.4+i*.31,-2.45],[-4.15,.4+i*.31,-2.45],'#425b68',1);
+box(-5.4,2.52,-2.36,2.47,.56,.17,['#46677b','#46677b','#46677b']);box(-5.4,1.45,-2.36,2.47,.63,.17,['#566672','#566672','#566672']);
+for(let n=0;n<24;n++){const col=n%12,row=Math.floor(n/12);const px=-6.48+col*.194,py=2.60-row*.20;box(px,py,-2.249,.139,.134,.02,['#050d15','#050d15','#050d15']);box(px,py+.085,-2.227,.055,.027,.021,[n===0&&!state.sw?'#ff594f':'#45eaa1'])}
+for(let n=0;n<5;n++){box(-6.20+n*.39,1.50,-2.25,.20,.16,.025,['#06131c']);box(-6.20+n*.39,1.63,-2.23,.07,.03,.02,[n===0&&!state.router?'#f4574d':'#65f7a2'])}
+box(-4.33,2.35,-2.22,.31,.045,.03,['#37bbda']);box(-4.3,1.28,-2.22,.27,.045,.03,['#37bbda']);
+// Cable between switch uplink and router; disconnected cable hanging in a loop
+const cableCol=state.cable?'#30ffb6':'#f6b64f';const a=[-6.48,2.60,-2.18],b=state.cable?[-6.2,1.5,-2.18]:[-5.88,.59,-1.90];let last=a;for(let n=1;n<=24;n++){let t=n/24;const p=[a[0]*(1-t)+b[0]*t+.42*Math.sin(t*Math.PI),a[1]*(1-t)+b[1]*t-.35*Math.sin(t*Math.PI),a[2]*(1-t)+b[2]*t+.26*Math.sin(t*Math.PI)];line3(last,p,cableCol,4);last=p}
+modelTransform=null;for(const o of objects)ring(o.x,o.z,state[o.id]?'#44f5a8':'#37bce4');floating('SW1 · 24 PORT',-14.4,3.55,-2.42,'#9befff',13);floating('R1 · ROUTER',-14.4,1.96,-2.2,'#b5edff',12);
+// Workstation tables, monitors and tower
+for(const [x,z] of [[13,-2.2],[16,-4.5],[11,-5.6]]){box(x,.9,z,2.25,.17,1.25,['#6b584b','#846e58','#4b423d']);for(const off of [-.92,.92])box(x+off,.44,z,.095,.85,.09,['#555d63']);box(x,1.42,z-.18,1.28,.88,.12,['#1c3447']);box(x,1.42,z-.10,1.12,.70,.02,[x===13&&!state.pc?'#69333e':'#125065']);box(x,1.15,z-.15,.11,.21,.10,['#8398a2']);box(x,.99,z+.36,.95,.035,.30,['#212936']);box(x+.88,.60,z-.25,.33,.71,.6,['#242a36']);floating(x===13?'PC1':x===16?'PC2':'PC3',x,2.2,z,'#a9edff',12)}
+drawExpansion();if(viewMode==='robot')drawRobot();
+// The player is PING-BOT: its hands are drawn in first person after the world.
+}
+function draw(){ctx.clearRect(0,0,W,H);const grad=ctx.createLinearGradient(0,0,0,H);grad.addColorStop(0,'#051320');grad.addColorStop(1,'#17415b');ctx.fillStyle=grad;ctx.fillRect(0,0,W,H);drawWorld();floorPolys.sort((a,b)=>b.depth-a.depth);const scene=viewMode==='robot'?[...roomPolys.sort((a,b)=>b.depth-a.depth),...polys.sort((a,b)=>b.depth-a.depth)]:[...roomPolys,...polys].sort((a,b)=>b.depth-a.depth);for(const p of [...floorPolys,...(window.CampusArt?.floorPolys||[]).sort((a,b)=>b.depth-a.depth),...scene]){if(p.text){ctx.fillStyle='#05182cee';ctx.font='bold '+p.size+'px system-ui';const width=ctx.measureText(p.text).width;ctx.fillRect(p.p.x-width/2-7,p.p.y-18,width+14,22);ctx.strokeStyle='#366e84';ctx.strokeRect(p.p.x-width/2-7,p.p.y-18,width+14,22);ctx.fillStyle=p.fill;ctx.fillText(p.text,p.p.x-width/2,p.p.y-2);continue}ctx.strokeStyle=p.stroke||p.fill;ctx.fillStyle=p.fill;ctx.lineWidth=p.thick;if(p.line){ctx.beginPath();ctx.moveTo(p.line[0].x,p.line[0].y);ctx.lineTo(p.line[1].x,p.line[1].y);ctx.stroke();continue}ctx.beginPath();p.pts.forEach((v,i)=>i?ctx.lineTo(v.x,v.y):ctx.moveTo(v.x,v.y));ctx.closePath();ctx.fill();ctx.strokeStyle='#00000018';ctx.lineWidth=.45;ctx.stroke()}drawFirstPerson()}
+function nearest(){let best=null,dist=2.25;for(const o of objects){let d=Math.hypot(o.x-player.x,o.z-player.z);if(d<dist){best=o;dist=d}}return best}function interact(){const n=nearest();if(n)enter(n);else toast('Move closer to the switch, router or computer.')}function enter(n){if(!started)return;tone(520,.11);robotSay('Connected to '+n.title.split(' · ')[0]+'. Try Diagnose or type help!');active=n;mode='user';opened=true;$('overlay').style.display='flex';$('modalTitle').textContent=n.title;$('desc').textContent=n.desc;$('portPanel').style.display=n.id==='sw'?'block':'none';drawPorts();$('terminal').textContent='PING-BOT NETWORK CONSOLE v4.0\nConnected to '+n.title+'\nPress Enter to execute. Type help for commands.\nYou can also paste multiple commands on separate lines.\n\n';$('helper').textContent=n.diag;$('cmd').value='';$('cmd').focus()}function leave(){opened=false;active=null;$('overlay').style.display='none';keys.clear()}
+function line(t){$('terminal').textContent+=t+'\n';$('terminal').scrollTop=$('terminal').scrollHeight}function promptName(){if(active.id==='pc')return 'C:\\>';const id=active.id==='sw'?'SW1':'R1';return id+(mode==='user'?'>':mode==='priv'?'#':mode==='config'?'(config)#':'(config-if)#')}
+function run(raw){if(!active)return;tone(540,.045,'square',.018);const text=raw.trim().replace(/\s+/g,' '),s=text.toLowerCase();if(!text)return;line(promptName()+' '+text);if(s==='help'||s==='?'){line(active.id==='pc'?'ipconfig /all | ping 8.8.8.8 | netsh interface ipv4 set address name="Ethernet" static <ip> <mask> <gateway>':'enable | configure terminal | show interfaces status | show ip interface brief | show ip route | interface fa0/1 | no shutdown | ip route 0.0.0.0 0.0.0.0 192.168.10.1 | end | exit');return}
+if(active.id==='pc'){if(s==='ipconfig'||s==='ipconfig /all'){line('Ethernet adapter Ethernet:\n  IPv4 Address . . . : 192.168.10.10\n  Subnet Mask  . . . : 255.255.255.0\n  Default Gateway . : '+(state.pc?'192.168.10.254':'192.168.10.1'));return}if(s.startsWith('netsh interface ipv4 set address')){if(/^netsh interface ipv4 set address name=["']?ethernet["']? static 192\.168\.10\.10 255\.255\.255\.0 192\.168\.10\.254(?: \d+)?$/.test(s)){if(!state.pc){state.pc=true;refresh();toast('PC gateway corrected · +200 XP')}line('Ok. IPv4 address settings saved.')}else line('Invalid addressing for this exercise. Use Hint.');return}if(s.startsWith('ping ')){const ip=s.split(' ')[1];if(ip!=='8.8.8.8'&&ip!=='192.168.10.254'){line('Test destinations: 8.8.8.8 or 192.168.10.254');return}if(state.cable&&state.sw&&state.router&&state.pc){line('Pinging '+ip+' with 32 bytes of data:\nReply from '+ip+': bytes=32 time=12ms TTL=54\nReply from '+ip+': bytes=32 time=11ms TTL=54\nReply from '+ip+': bytes=32 time=12ms TTL=54\nSent = 3, Received = 3, Lost = 0 (0% loss)');if(!state.ping){state.ping=true;refresh();toast('Core connectivity restored! +200 XP')}}else line('Request timed out. Verify cable, switch interface, router route and gateway.');return}line('Unrecognized workstation command. Type help.');return}
+if(s==='enable'||s==='en'){mode='priv';line('Privileged EXEC access granted.');return}if(s==='configure terminal'||s==='conf t'){if(mode!=='priv'){line('% Use enable first.');return}mode='config';line('Global configuration mode.');return}if(s==='end'){mode='priv';return}if(s==='exit'){mode=mode==='config-if'?'config':mode==='config'?'priv':'user';return}if(s==='show interfaces status'||s==='show ip interface brief'){if(active.id==='sw')line('Interface          Status                  Protocol\nFa0/1              '+(state.sw?(state.cable?'connected               up':'notconnect              down'):'administratively down   down')+'\nFa0/2              connected               up');else line('Interface          IP Address        Status\nGi0/0              192.168.10.254    up\nGi0/1              192.168.10.2      up');return}if(s==='show ip route'){line(active.id==='router'?(state.router?'Gateway of last resort is 192.168.10.1\nS* 0.0.0.0/0 [1/0] via 192.168.10.1':'Gateway of last resort is not set\nC 192.168.10.0/24 is directly connected, GigabitEthernet0/0'):'Layer 2 access switch: use show interfaces status.');return}if(s==='interface fa0/1'||s==='interface fastethernet0/1'){if(active.id!=='sw'||mode!=='config'){line('% Enter switch global configuration mode first.');return}mode='config-if';line('Interface FastEthernet0/1 selected.');return}if(s==='no shutdown'){if(active.id==='sw'&&mode==='config-if'){if(!state.sw){state.sw=true;refresh();toast('Switch uplink enabled · +200 XP')}line('% Interface Fa0/1 enabled. '+(state.cable?'Link up.':'No physical cable; line protocol down.'))}else line('% Select a switch interface first.');return}if(s.startsWith('ip route ')){if(active.id==='router'&&mode==='config'&&s==='ip route 0.0.0.0 0.0.0.0 192.168.10.1'){if(!state.router){state.router=true;refresh();toast('Default route configured · +200 XP')}line('Static default route installed.')}else line('% Incorrect route or command mode.');return}line('% Invalid command in this simulator. Type help.');}
+function submitCommand(){
+  if(!opened||!active)return;
+  const command=$('cmd').value.trim();
+  if(!command){$('cmd').focus();return;}
+  // Accept multi-line command sequences pasted from a networking worksheet.
+  for(const part of command.split(/[\r\n;]+/)){
+    const single=part.trim();
+    if(!single)continue;
+    history.push(single);
+    try { run(single); } catch(err) { line('Console error: '+err.message); console.error(err); }
+  }
+  historyIndex=history.length;
+  $('cmd').value='';$('cmd').focus();
+}
+$('cmdForm').addEventListener('submit',e=>{e.preventDefault();e.stopPropagation();submitCommand()});
+$('cmd').addEventListener('keydown',e=>{
+  if(e.key==='Enter'&&!e.shiftKey&&!e.isComposing){e.preventDefault();e.stopPropagation();submitCommand();return;}
+  if(e.key==='ArrowUp'){e.preventDefault();historyIndex=Math.max(0,historyIndex-1);$('cmd').value=history[historyIndex]||''}
+  if(e.key==='ArrowDown'){e.preventDefault();historyIndex=Math.min(history.length,historyIndex+1);$('cmd').value=history[historyIndex]||''}
+});
+$('cableBtn').onclick=()=>{if(active?.id!=='sw')return;if(!state.cable){state.cable=true;refresh();toast('RJ45 uplink cable connected · +200 XP');line('Physical cabling: Fa0/1 connected to router Gi0/1.')}};$('diagnose').onclick=()=>$('helper').textContent=active.diag;$('hint').onclick=()=>$('helper').textContent=active.hint;$('commands').onclick=()=>$('helper').textContent=active.id==='pc'?'ipconfig /all · ping 8.8.8.8 · netsh interface ipv4 set address name="Ethernet" static ...':'enable · configure terminal · interface fa0/1 · no shutdown · show interfaces status · show ip route · ip route 0.0.0.0 0.0.0.0 192.168.10.1';$('close').onclick=leave;
+$('start').onclick=()=>{tone(660,.16);started=true;$('welcome').style.display='none';toast('Welcome! Meet Amina at the helpdesk. Press E to say hello.')};$('reset').onclick=()=>{if(!confirm('Reset all objectives and start again?'))return;for(const k of Object.keys(state))state[k]=false;player.x=26;player.z=3.6;player.dir=Math.PI;yaw=.25;lookPitch=-.10;zoom=12;tick=0;selectedPort=1;history=[];historyIndex=0;leave();refresh();toast('Lab reset. All faults restored.')};$('cameraBtn').textContent='Look right';$('cameraBtn').onclick=()=>{yaw-=.45};$('use').onclick=interact;
+addEventListener('keydown',e=>{if(e.target instanceof HTMLInputElement)return;if(e.target instanceof HTMLTextAreaElement || e.target?.isContentEditable)return;const k=e.key.toLowerCase();if(['w','a','s','d','arrowup','arrowdown','arrowleft','arrowright','shift','e','escape'].includes(k))e.preventDefault();if(k==='escape'&&opened){leave();return}if(k==='e'&&!e.repeat&&!opened)interact();if(!opened)keys.add(k)});addEventListener('keyup',e=>keys.delete(e.key.toLowerCase()));addEventListener('blur',()=>keys.clear());for(const b of document.querySelectorAll('[data-key]')){b.onpointerdown=e=>{e.preventDefault();keys.add(b.dataset.key);b.setPointerCapture(e.pointerId)};for(const evt of ['pointerup','pointercancel','lostpointercapture'])b.addEventListener(evt,()=>keys.delete(b.dataset.key))}if(matchMedia('(pointer:coarse)').matches||innerWidth<700)$('mobile').style.display='flex';let dragging=false,lastX=0,lastY=0;canvas.onpointerdown=e=>{if(opened)return;dragging=true;lastX=e.clientX;lastY=e.clientY;canvas.setPointerCapture(e.pointerId)};canvas.onpointerup=()=>dragging=false;canvas.onpointercancel=()=>dragging=false;canvas.onlostpointercapture=()=>dragging=false;canvas.onpointermove=e=>{if(dragging){yaw-=(e.clientX-lastX)*.004;lookPitch=clamp(lookPitch-(e.clientY-lastY)*.003,-.85,.7);lastX=e.clientX;lastY=e.clientY}};canvas.onwheel=e=>{e.preventDefault();zoom=clamp(zoom+Math.sign(e.deltaY)*.7,9,15)};
+
+// Training expansion: connected rooms, physical obstacles, guided progression.
+Object.assign(state,{vlan:false,dhcp:false,dns:false,wifi:false});
+mission.push(['vlan','Assign classroom port to VLAN 20'],['dhcp','Restore automatic office addressing'],['dns','Restore office DNS resolution'],['wifi','Restore and verify office Wi-Fi']);
+objects.push({id:'office',x:2,z:-2,title:'OFFICE · CLIENT SERVICES',desc:'Office laptop · DHCP and DNS exercises',hint:'ipconfig /renew, then netsh interface ipv4 set dns name="Ethernet" static 192.168.10.53. Verify with nslookup intranet.lab.',diag:'Office client has an APIPA address (169.254.20.5); DNS service is unreachable.'},{id:'ap',x:-3,z:-3,title:'AP1 · OFFICE WIRELESS',desc:'Managed access point · wireless recovery',hint:'enable > configure terminal > interface wlan0 > no shutdown > end > show wireless clients',diag:'The office wireless radio is administratively disabled.'});
+let showPath=true,showMap=true;
+const stageDevice=['sw','sw','router','pc','pc','sw','office','office','ap'];
+function currentStage(){return mission.findIndex(([k])=>!state[k])}
+function stageTarget(){const i=currentStage();return i<0?null:objects.find(o=>o.id===stageDevice[i])}
+function campusRoom(x){return x<-10?'SERVER ROOM':x<10?'OPERATIONS OFFICE':x<21?'CLASSROOM':x<34?'WELCOME HUB':x<46?'SYSTEMS WORKSHOP':'LIBRARY & MAKER SPACE'}
+function routeTo(target){if(!target)return [];const pts=[[player.x,.07,player.z]],borders=[-10,10,21,34,46],direction=Math.sign(target.x-player.x),crossings=borders.filter(x=>direction>0?x>player.x&&x<target.x:x<player.x&&x>target.x).sort((a,b)=>(a-b)*direction);if(crossings.length){pts.push([player.x,.07,3.6]);for(const x of crossings)pts.push([x-direction*.9,.07,3.6],[x+direction*.9,.07,3.6]);pts.push([target.x,.07,3.6])}pts.push([target.x,.07,target.z]);return pts.filter((p,i)=>i===0||Math.hypot(p[0]-pts[i-1][0],p[2]-pts[i-1][2])>.05)}
+function canWalk(x,z){
+ if(x< -20||x>58||z< -7||z>7.5)return false;
+ if([-10,10,21,34,46].some(border=>Math.abs(x-border)<.45)&&(z<2.5||z>4.7))return false;
+ const obstacles=[[-16.3,-12.65,-4.3,-2.45],[11.5,14.5,-3.2,-1.3],[14.6,17.4,-5.5,-3.65],[9.7,12.4,-6.6,-4.75],[.5,3.5,-3.6,-2.5],[-3.7,-2.3,-3.7,-2.3],[23.9,28.1,-3.85,-2.15],[37.5,40.5,-3.8,-2.3],[49.65,52.35,-3.85,-2.15],[41.15,42.85,-6.8,-5.2],[53.14,54.86,-6.75,-5.25],[40.17,41.13,-3.56,-2.44]];
+ if(window.CampusArt?.collisions?.some(([cx,cz,w,d])=>Math.abs(x-cx)<w/2+.25&&Math.abs(z-cz)<d/2+.25))return false;return !obstacles.some(([a,b,c,d])=>x>a&&x<b&&z>c&&z<d);
+}
+function drawExpansion(){
+ for(const [x,text,color] of [[-15,'SERVER ROOM','#73eaff'],[0,'OPERATIONS OFFICE','#8bffcc'],[15,'CLASSROOM','#ffd087']]){floating(text,x,.12,5.8,color,14);line3([x-3,.04,5.3],[x+3,.04,5.3],color,3)}
+ box(2,.9,-3,2.5,.15,1.2,['#796553']);for(const x of [1,3])box(x,.45,-3,.09,.9,.09,['#4f6978']);box(2,1.3,-3,1,.65,.08,['#18394d']);box(2,1.3,-2.95,.85,.5,.02,[state.dns?'#208b83':'#885c38']);box(2,1,-2.65,1,.04,.4,['#405a69']);
+ box(-3,.5,-3,.8,1,.8,['#2a4658']);box(-3,1.08,-3,.95,.16,.65,['#e3ecf3']);for(const x of [-3.3,-2.7])box(x,1.4,-3,.035,.6,.035,['#6f9caf']);box(-3,1.18,-2.66,.16,.045,.03,[state.wifi?'#5bffad':'#ff665e']);floating('AP1 · WI-FI',-3,2,-3,'#b5efff',12);floating('OFFICE CLIENT',2,2,-3,'#b5efff',12);
+ const n=nearest();if(n){ring(n.x,n.z,'#ffe18a');floating(n.kind==='customer'?'[E] SAY HELLO':'[E] INSPECT',n.x,3.85,n.z,'#ffe18a',12)}
+ const t=stageTarget();if(showPath&&t){const pts=routeTo(t);for(let i=1;i<pts.length;i++)line3(pts[i-1],pts[i],'#ffdc85',3);ring(t.x,t.z,'#ffdc85');floating('MISSION',t.x,4.3,t.z,'#ffdf86',12)}
+}
+function updateGuide(){const i=currentStage(),t=stageTarget();$('roomName').textContent=campusRoom(player.x);$('nextTask').textContent=i<0?'All systems restored. Excellent work!':`${i+1}/${mission.length} · ${mission[i][1]}`;const pts=routeTo(t);let distance=0;for(let j=1;j<pts.length;j++)distance+=Math.hypot(pts[j][0]-pts[j-1][0],pts[j][2]-pts[j-1][2]);const next=pts[1],dx=next?next[0]-player.x:0,dz=next?next[2]-player.z:0,bearing=Math.atan2(dx*Math.cos(yaw)-dz*Math.sin(yaw),-dx*Math.sin(yaw)-dz*Math.cos(yaw));const direction=Math.abs(bearing)<.55?'Ahead':Math.abs(bearing)>2.6?'Behind':bearing>0?'Right':'Left';$('distance').textContent=t?`${t.title.split(' · ')[0]} · ${distance.toFixed(1)} m · ${direction} · gold path`:'Explore the lab or reset for another practice run.';
+ const map=(id,x,z)=>{ $(id).setAttribute('cx',String(3+(x+21)/80*274));$(id).setAttribute('cy',String(53+z*5))};map('mapPlayer',player.x,player.z);$('mapTarget').style.display=t?'':'none';if(t)map('mapTarget',t.x,t.z);
+ $('links').textContent=`SW1 · R1: ${state.cable&&state.sw?'LINK UP · 1 Gbps':'LINK DOWN'} | Internet: ${state.ping?'verified':'unverified'}\nVLAN 20: ${state.vlan?'active':'unassigned'} · DHCP: ${state.dhcp?'leased':'APIPA'} · DNS: ${state.dns?'verified':'fault'} · Wi-Fi: ${state.wifi?'1 client':'offline'}`;
+}
+for(const [id,label,handler] of [['recenter','Recenter (C)',()=>{yaw=.25;lookPitch=-.10;zoom=12;cameraFollow.x=player.x;cameraFollow.z=player.z}],['pathToggle','Path ON',()=>{showPath=!showPath;$('pathToggle').textContent='Path '+(showPath?'ON':'OFF')}],['mapToggle','Map ON',()=>{showMap=!showMap;$('mapPanel').style.display=showMap?'block':'none';$('mapToggle').textContent='Map '+(showMap?'ON':'OFF')}]]){const b=document.createElement('button');b.id=id;b.textContent=label;b.onclick=handler;$('bottom').append(b)}
+addEventListener('keydown',e=>{if(!opened&&e.key.toLowerCase()==='c'&&!(e.target instanceof HTMLTextAreaElement))$('recenter').click()});
+const baseEnter=enter;enter=function(n){keys.clear();baseEnter(n);interactionKick=1;if(n.id==='office'||n.id==='ap')$('helper').textContent=n.diag;else if(n.id==='sw'&&state.ping)$('helper').textContent='Classroom uplink is in VLAN 1; assign Fa0/2 to VLAN 20. Diagnose or Hint for details.'};
+const baseRun=run;let officeDnsSet=false,radioEnabled=false,configuredPort=1;const counters={sw:0,router:0};
+function complete(key,message){if(!state[key]){state[key]=true;refresh();toast(message+' · +200 XP')}}
+run=function(raw){const cmd=raw.trim().replace(/\s+/g,' ').toLowerCase();
+ if(cmd==='show interfaces counters'&&['sw','router'].includes(active.id)){line(promptName()+' '+raw);line('Interface    RX packets    TX packets    Link\n'+(active.id==='sw'?'Fa0/1':'Gi0/1')+'         '+(counters[active.id]+=state.cable&&state.sw?24:0)+'            '+counters[active.id]+'            '+(state.cable&&state.sw?'up':'down'));return}
+ if(active.id==='sw'&&(cmd==='show vlan brief'||cmd==='switchport access vlan 20'||cmd==='interface fa0/2')){line(promptName()+' '+raw);if(cmd==='show vlan brief')line('1  default  active  Fa0/1'+(state.vlan?'':' Fa0/2')+'\n20 classroom active '+(state.vlan?'Fa0/2':''));else if(cmd==='interface fa0/2'){if(mode!=='config')line('% Enter global configuration mode first.');else {mode='config-if';configuredPort=2;selectedPort=2;line('Interface Fa0/2 selected.')}}else if(mode!=='config-if'||configuredPort!==2)line('% Select interface Fa0/2 first.');else if(!state.ping)line('% Finish the initial connectivity mission first.');else complete('vlan','Classroom VLAN 20 assigned');return}
+ if(active.id==='office'){
+ line('C:\\> '+raw);
+ if(cmd==='help'||cmd==='?'){line('ipconfig /all | ipconfig /renew | nslookup intranet.lab | netsh interface ipv4 set dns name="Ethernet" static 192.168.10.53');return}
+ if(cmd==='ipconfig'||cmd==='ipconfig /all'){line('IPv4: '+(state.dhcp?'192.168.20.25':'169.254.20.5')+'\nMask: 255.255.255.0\nGateway: '+(state.dhcp?'192.168.20.1':'none')+'\nDNS: '+(officeDnsSet?'192.168.10.53':'192.168.10.99'));return}
+ if(cmd==='ipconfig /renew'){if(!state.vlan)line('DHCP timeout. Restore classroom VLAN 20 first.');else {complete('dhcp','DHCP lease received');line('Lease: 192.168.20.25 /24 · gateway 192.168.20.1 · 8 hours')}return}
+ if(cmd==='netsh interface ipv4 set dns name="ethernet" static 192.168.10.53'){if(!state.dhcp)line('Restore the DHCP lease first.');else {officeDnsSet=true;line('DNS saved. Verify: nslookup intranet.lab')}return}
+ if(cmd==='nslookup intranet.lab'){if(officeDnsSet&&state.dhcp){line('Server: 192.168.10.53\nName: intranet.lab\nAddress: 192.168.20.10');complete('dns','DNS resolution verified')}else line('DNS request timed out. Check the DNS server address.');return}line('Unknown command. Type help.');return}
+ if(active.id==='ap'){
+ line('AP1'+(mode==='user'?'>':'#')+' '+raw);
+ if(cmd==='help'||cmd==='?'){line('enable | configure terminal | interface wlan0 | no shutdown | end | show wireless clients');return}
+ if(cmd==='enable'){mode='priv';return}if(cmd==='configure terminal'&&mode==='priv'){mode='config';return}if(cmd==='interface wlan0'&&mode==='config'){mode='config-if';return}if(cmd==='end'){mode='priv';return}
+ if(cmd==='no shutdown'&&mode==='config-if'){if(!state.dns)line('Restore office DNS before commissioning Wi-Fi.');else {radioEnabled=true;line('Radio enabled. Verify: show wireless clients')}return}
+ if(cmd==='show wireless clients'){if(radioEnabled&&state.dns){line('SSID: PacketLab · WPA2\nOFFICE-01  192.168.20.25  -48 dBm  connected');complete('wifi','Office Wi-Fi verified')}else line('No clients. Radio disabled or services unavailable.');return}line('Invalid command or mode. Type help.');return}
+ if(active.id==='sw'&&(cmd==='interface fa0/1'||cmd==='interface fastethernet0/1')&&mode==='config')configuredPort=1;if(active.id==='sw'&&cmd==='no shutdown'&&mode==='config-if'&&configuredPort===2){line('Fa0/2 is already enabled.');return}if((cmd==='help'||cmd==='?')&&active.id==='sw'){baseRun(raw);line('Advanced: interface fa0/2 | switchport access vlan 20 | show vlan brief | show interfaces counters');return}baseRun(raw);
+};
+$('hint').onclick=()=>{$('helper').textContent=active.id==='sw'&&state.ping?'enable > configure terminal > interface fa0/2 > switchport access vlan 20 > end > show vlan brief':active.hint};
+$('commands').onclick=()=>run('help');
+$('diagnose').onclick=()=>{$('helper').textContent=active.id==='sw'&&state.ping?(state.vlan?'Fa0/2 is in VLAN 20.':'Fa0/2 is in VLAN 1; classroom requires VLAN 20.'):active.id==='office'?(state.dns?'DHCP and DNS verified.':state.dhcp?'Lease received. DNS server is incorrect.':active.diag):active.id==='ap'?(state.wifi?'Radio online; one associated client.':active.diag):active.diag};
+const baseReset=$('reset').onclick;$('reset').onclick=()=>{baseReset();if(!state.ping){showPath=true;$('pathToggle').textContent='Path ON';officeDnsSet=false;radioEnabled=false;cameraFollow.x=player.x;cameraFollow.z=player.z}};
+refresh();
+
+
+// Procedural art and audio keep the entire experience available offline.
+function tint(hex,gain){const n=parseInt(hex.slice(1),16);return '#'+[n>>16,(n>>8)&255,n&255].map(v=>Math.min(255,Math.round(v*gain)).toString(16).padStart(2,'0')).join('')}
+function floorPatch(x,z,w,d,color){quad([x-w/2,.011,z-d/2],[x+w/2,.011,z-d/2],[x+w/2,.011,z+d/2],[x-w/2,.011,z+d/2],color)}
+function drawRoomMaterials(){
+ const walls=polys;polys=[];
+ for(let x=-20;x<59;x+=2)for(let z=-7.5;z<8;z+=2){const server=x<-10,room=x>10,alternate=(Math.round(x/2)+Math.round(z/2))%2===0;floorPatch(x,z,1.97,1.97,server?(alternate?'#35495a':'#304352'):room?(alternate?'#a29983':'#aaa18c'):(alternate?'#455c61':'#40565b'))}
+ floorPolys=polys;polys=walls;
+ for(const x of [-15,0,15]){
+ const color=x<0?'#53cce2':x>0?'#ffcc82':'#74d5b8';
+ box(x,3.8,-8.28,9,.055,.06,[color]);box(x,.12,-8.3,9,.12,.08,['#152b37']);
+ if(viewMode==='first')for(const off of [-3,0,3]){box(x+off,3.93,-3,1.1,.035,1.8,['#dbe4dc']);line3([x+off-.8,3.89,-4],[x+off+.8,3.89,-4],'#fcf8d8',3)}
+ for(let j=0;j<4;j++)box(x-4+j*2.6,1.4,-8.33,2.4,2.4,.04,[x<0?'#243e51':x>0?'#58697a':'#35545b']);
+ }
+ for(const x of [-10,10,21,34,46]){for(const side of [2.15,5.15])box(x,1.25,side,.22,2.5,.12,['#71d9d4']);box(x,2.55,3.65,.24,.14,3.1,['#456d79']);}
+}
+function shadow(x,z,w,d){const pts=[];for(let i=0;i<24;i++){const a=i*Math.PI/12;pts.push([x+Math.cos(a)*w,.025,z+Math.sin(a)*d])}polygon(pts,'#030b1445')}
+function plant(x,z){shadow(x,z,.6,.4);box(x,.27,z,.46,.54,.46,['#b5a68d']);for(let i=0;i<5;i++){const a=i*2.4;box(x+Math.sin(a)*.13,.66+i*.09,z+Math.cos(a)*.12,.12,.65,.12,['#518c69'])}}
+function drawScenery(){
+ for(const [x,z,w] of [[-14.4,-3.3,1.8],[13,-2.2,1.4],[16,-4.5,1.4],[11,-5.6,1.4],[2,-3,1.6],[-3,-3,.65]])shadow(x,z,w,.9);
+ for(const x of [-19,-17.4]){box(x,1.65,-6,1.25,3.3,1.2,['#283b4b']);for(let i=0;i<8;i++){box(x,.35+i*.36,-5.37,1.08,.28,.045,['#152738']);for(let j=0;j<5;j++)line3([x-.4+j*.16,.3+i*.36,-5.33],[x-.4+j*.16,.45+i*.36,-5.33],'#486373',1);box(x+.43,.4+i*.36,-5.32,.045,.035,.03,[(i+Math.floor(performance.now()/600))%3?'#63e8b1':'#347468'])}}
+ for(const [x,z] of [[13,-2.2],[16,-4.5],[11,-5.6]]){
+ // Screens, keyboard keys, mouse and adjustable chairs.
+ for(let j=0;j<4;j++)line3([x-.43,1.62-j*.1,z-.081],[x+.15+(j%2)*.2,1.62-j*.1,z-.081],j===0?'#6ce9db':'#477b91',2);
+ for(let row=0;row<3;row++)for(let col=0;col<10;col++)box(x-.4+col*.085,1.015,z+.27+row*.075,.06,.012,.045,['#667887']);
+ box(x+.72,1.015,z+.33,.13,.07,.2,['#b4bcb8']);
+ box(x,.52,z+1.55,.63,.15,.62,['#364d60']);box(x,.87,z+1.82,.63,.65,.12,['#456176']);box(x,.25,z+1.55,.07,.5,.07,['#9aaeb3']);
+ for(const side of [-1,1])line3([x,.08,z+1.55],[x+side*.43,.08,z+1.8],'#657e89',4);
+ }
+ for(const x of [-7,7]){box(x,1.8,-8.18,3,1.7,.08,['#b6cbca']);box(x,1.8,-8.10,2.8,1.5,.03,['#123748']);for(let i=0;i<5;i++)line3([x-1.1,2.25-i*.23,-8.07],[x+.4+(i%2)*.65,2.25-i*.23,-8.07],i===0?'#77e0dc':'#417582',2)}
+ plant(-8,-6);plant(8,-6);plant(18,-6);plant(-19,5.8);
+ floating('01 / NETWORK CORE',-15,3.3,-8,'#88e6f4',15);floating('02 / OPERATIONS',0,3.3,-8,'#a3f0ce',15);floating('03 / LEARNING LAB',15,3.3,-8,'#ffe0b3',15);
+}
+let stepDistance=0,footstepCount=0,interactionKick=0,celebration=0,fxVolume=.85,stepVolume=.8;
+function travelStep(distance){stepDistance+=distance;if(stepDistance>(keys.has('shift')?.9:.72)){stepDistance=0;footstepCount++;if(soundEnabled&&stepVolume>0){const carpet=player.x>-10&&player.x<10;tone(carpet?220:290+Math.random()*30,.11,'triangle',.10*stepVolume);tone(550+Math.random()*100,.075,'sine',.035*stepVolume);tone(950+Math.random()*80,.11,'sine',.025*stepVolume)}}}
+function updateFeedback(dt){interactionKick=Math.max(0,interactionKick-dt*3);celebration=Math.max(0,celebration-dt);if(opened||!started)movingAmount=0}
+function drawFirstPerson(){
+ if(!started||opened||viewMode!=='first')return;
+ const warmth=ctx.createLinearGradient(0,0,0,H);warmth.addColorStop(0,'#ffdfad0b');warmth.addColorStop(1,'#38c7e805');ctx.fillStyle=warmth;ctx.fillRect(0,0,W,H);const vignette=ctx.createRadialGradient(W/2,H*.45,H*.25,W/2,H*.5,Math.max(W,H)*.7);vignette.addColorStop(0,'#00101a00');vignette.addColorStop(1,'#00101a88');ctx.fillStyle=vignette;ctx.fillRect(0,0,W,H);
+ // Robot gauntlet and handheld network tester; gentle sway can be disabled.
+ const sway=reducedMotion?0:Math.sin(tick*11)*5*movingAmount,scale=Math.min(W/1100,H/740),x=W*.77,y=H+25+Math.abs(sway)-interactionKick*14;
+ ctx.save();ctx.translate(x+sway,y);ctx.scale(scale,scale);ctx.rotate(-.13);
+ function panel(x,y,w,h,r,color){ctx.fillStyle=color;ctx.beginPath();ctx.roundRect(x,y,w,h,r);ctx.fill();ctx.strokeStyle='#b3f2f34a';ctx.lineWidth=2;ctx.stroke()}
+ panel(-25,-105,100,190,22,'#1b627b');panel(-37,-145,119,58,15,'#a4d5dc');panel(-25,-218,97,110,20,'#214b60');
+ panel(-90,-292,148,192,16,'#172c3e');panel(-78,-280,124,123,8,'#3d756e');ctx.fillStyle='#b7ffda';ctx.font='bold 14px monospace';ctx.fillText('LINK SCANNER',-69,-255);ctx.font='12px monospace';ctx.fillText(nearest()?(nearest().kind==='customer'?'SAY HELLO':'DEVICE NEARBY'):'SEARCHING...',-69,-232);ctx.fillText('PING / TRACE',-69,-210);ctx.fillStyle='#87ffda';ctx.fillRect(-69,-190,75*(.55+.15*Math.sin(performance.now()/700)),4);panel(-68,-141,24,15,5,'#f4bc71');panel(-25,-141,24,15,5,'#57c9cb');ctx.restore();
+ if(interactionKick>0&&!reducedMotion){ctx.fillStyle='#80f9dd';ctx.globalAlpha=interactionKick*.08;ctx.fillRect(0,H*(1-interactionKick),W,3);ctx.globalAlpha=1}const n=nearest();ctx.strokeStyle=n?'#ffda86':'#b9e9ecbb';ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(W/2,H/2,n?7:3,0,Math.PI*2);ctx.stroke();if(n){ctx.beginPath();ctx.moveTo(W/2-13,H/2);ctx.lineTo(W/2-9,H/2);ctx.moveTo(W/2+9,H/2);ctx.lineTo(W/2+13,H/2);ctx.stroke()}
+ if(celebration>0&&!reducedMotion){const t=1-celebration/1.4;for(let i=0;i<24;i++){const a=i*2.399;ctx.fillStyle=i%2?'#ffd78c':'#67f1d5';ctx.globalAlpha=Math.min(1,celebration);ctx.fillRect(W/2+Math.cos(a)*t*W*.4,H*.45+Math.sin(a)*t*H*.35+t*t*80,5,5)}ctx.globalAlpha=1}
+}
+const originalTone=tone;tone=function(freq=440,duration=.10,type='sine',volume=.045){originalTone(freq,duration,type,volume*fxVolume*1.4)};
+const originalToast=toast;toast=function(message){originalToast(message);if(message.includes('XP')){celebration=1.4;[660,830,990].forEach((freq,i)=>setTimeout(()=>tone(freq,.15,'sine',.06),i*100))}};
+const settings=document.createElement('section');settings.id='preferences';settings.className='panel';settings.hidden=true;settings.innerHTML='<strong>VIEW & AUDIO</strong><label>Camera view <select id="settingsView"><option value="first">First person</option><option value="robot">Robot view</option></select></label><label>Sound effects <input id="fxVolume" type="range" min="0" max="1" step=".05" value=".85"></label><label>Robot footsteps <input id="stepVolume" type="range" min="0" max="1" step=".05" value=".8"></label><label><input id="reduceMotion" type="checkbox"> Reduced motion</label><p>Drag to look up, down and around. Arrow keys turn. WASD walks. E inspects.</p>';
+document.body.append(settings);$('reduceMotion').checked=reducedMotion;$('fxVolume').oninput=e=>fxVolume=Number(e.target.value);$('stepVolume').oninput=e=>stepVolume=Number(e.target.value);$('reduceMotion').onchange=e=>reducedMotion=e.target.checked;
+for(const [id,text,handler] of [['settingsBtn','Settings',()=>settings.hidden=!settings.hidden],['objectivesBtn','Objectives',()=>document.body.classList.toggle('showObjectives')]]){const b=document.createElement('button');b.id=id;b.textContent=text;b.onclick=handler;$('bottom').append(b)}
+
+
+function setView(mode){viewMode=mode==='robot'?'robot':'first';cameraFollow.x=player.x;cameraFollow.z=player.z;for(const id of ['welcomeView','settingsView'])$(id).value=viewMode;$('viewBtn').textContent=viewMode==='first'?'View: First person':'View: Robot';$('viewBtn').setAttribute('aria-label',viewMode==='first'?'First person view. Switch to robot view':'Robot view. Switch to first person');}
+const viewButton=document.createElement('button');viewButton.id='viewBtn';viewButton.onclick=()=>setView(viewMode==='first'?'robot':'first');$('bottom').prepend(viewButton);
+$('welcomeView').onchange=e=>setView(e.target.value);$('settingsView').onchange=e=>setView(e.target.value);setView('first');
+function drawRobot(){
+ const px=player.x,pz=player.z,bob=reducedMotion?0:Math.sin(tick*11)*.04*movingAmount,stride=Math.sin(tick*11)*.22*movingAmount;
+ const c=Math.cos(player.dir),sn=Math.sin(player.dir);modelTransform=v=>{const x=v[0]-px,z=v[2]-pz;return[px+x*c+z*sn,v[1],pz-x*sn+z*c]};
+ try{
+ box(px,.92+bob,pz,.69,.72,.48,['#27bddd']);box(px,1.48+bob,pz,.83,.66,.60,['#a6e1ed']);
+ box(px,1.5+bob,pz+.315,.66,.39,.042,['#0b283d']);
+ for(const x of [-.20,.20]){box(px+x,1.54+bob,pz+.35,.13,.16,.028,['#72f5e2']);box(px+x,1.56+bob,pz+.37,.04,.05,.012,['#edffff'])}
+ box(px,1.36+bob,pz+.35,.23,.025,.02,['#61e9c7']);box(px,1.93+bob,pz,.045,.25,.045,['#a8c5cf']);box(px,2.07+bob,pz,.14,.13,.14,['#ffcd7e']);
+ for(const side of [-1,1]){box(px+side*.48,1.02+bob,pz+stride*side,.20,.48,.23,['#f2bc6c']);box(px+side*.18,.36,pz+stride*side,.24,.65,.27,['#356fb8']);box(px+side*.18,.10,pz+stride*side+.09,.34,.17,.40,['#163e55'])}
+ box(px,.95+bob,pz+.26,.25,.20,.025,['#8ff5df']);box(px,1.1+bob,pz-.32,.46,.48,.20,['#e9a65c']);
+ }finally{modelTransform=null}
+ shadow(px,pz,.48,.33);ring(px,pz,'#81edda');floating('PING-BOT',px,2.4+bob,pz,'#b2f7e9',12);
+}
+
+// CAMPUS_MODULES_BEGIN
+// Student support stories. Every console is simulated and stays offline.
+(() => {
+  'use strict';
+  const makeProgress = () => ({accepted:false,listened:false,acknowledged:false,empathy:false,identityVerified:false,diagnostics:{},fixed:false,verified:false,confirmed:false,hintLevel:0});
+  const cases = [
+    {id:'network',category:'NETWORK SUPPORT',title:'A classroom back online',person:'Amina',role:'Student support coordinator',color:'#4edcc2',x:26,z:-1,
+      story:'Our class is about to share their projects, but the classroom computers cannot reach the learning portal. Some students are worried their work is gone.',
+      question:'What can students still do, and who is affected?',answer:'The whole classroom is affected. Their saved work is still there. The local link, gateway, VLAN and office services all need checking.',
+      care:'Their work matters. I will explain what I find and check everyone can reconnect.',reply:'Thank you. Knowing their projects are safe will really help.',
+      resolution:'The students can share their projects again. Thank you for looking after the people as well as the network.',lesson:'Trace a connection from the physical cable through addressing, VLANs, DNS and Wi-Fi.'},
+    {id:'account',category:'IDENTITY & ACCESS',title:'Leo is locked out',person:'Leo',role:'New teaching assistant',color:'#85b9ff',x:39,z:0,device:'identity',
+      story:'It is my first week helping in class. My sign-in stopped working after I typed an old password, and I am embarrassed to hold everyone up.',
+      question:'What message appears when you try to sign in?',answer:'It says “Account locked out.” I tried an old password three times. I have my staff badge with me; I will keep my password private.',
+      care:'That happens. We can check your identity and get you back in safely.',reply:'Thanks for being patient. I can show you my badge.',
+      resolution:'I can sign in and help my students now. You made this feel manageable, and kept my account safe.',lesson:'Confirm identity, inspect lockout state, unlock the account, then test sign-in without asking for a password.'},
+    {id:'print',category:'WINDOWS SERVICES',title:'Mei’s posters will not print',person:'Mei',role:'Student club organizer',color:'#ffb47e',x:51,z:0,device:'printdesk',
+      story:'Our club made welcome posters for new students. The printer has paper and power, but our jobs keep sitting in the queue.',
+      question:'Is it just one file, or are all print jobs waiting?',answer:'Every job is waiting, from more than one computer. The printer display says Ready. It is okay to restart the service; please keep the jobs.',
+      care:'You have put a lot into these posters. Let us check the queue before changing anything.',reply:'I appreciate that. I do not want everyone to submit duplicate jobs.',
+      resolution:'The test page printed and our posters are coming through. Our welcome event is back on track!',lesson:'Inspect the queue and service together. Restart only the affected service, preserve jobs, then print a test page.'},
+    {id:'disk',category:'LINUX OPERATIONS',title:'Noor’s learning app paused',person:'Noor',role:'Learning lab tutor',color:'#d4a3ff',x:36.8,z:-3.7,device:'linux',
+      story:'Our practice app stopped saving quiz attempts. I promised students their progress would be looked after. Can you find out what is wrong?',
+      question:'When did saving stop, and are student files backed up?',answer:'The server warned that its disk was full. Student submissions are in /srv/student-work and must stay untouched. Only the lab’s *.tmp cache in /var/tmp/lab-cache is approved for cleanup.',
+      care:'We will protect their work and inspect disk usage before cleaning the approved cache.',reply:'That is reassuring. Please make sure the app can write again afterward.',
+      resolution:'The app is saving again, and every student submission is still here. Thank you for being careful.',lesson:'Locate the space problem, clean only approved disposable files, then check both free space and application health.'},
+    {id:'files',category:'FILES & PERMISSIONS',title:'Iris cannot open the course notes',person:'Iris',role:'Library learning mentor',color:'#f0cd69',x:56,z:-3.8,device:'fileserver',
+      story:'Students can see the course-notes folder, but opening the lesson gives “Access denied.” Some rely on these notes for independent study.',
+      question:'Who needs access, and should they be able to edit the notes?',answer:'The students group needs read access. Only tutors should edit. This started after a permissions change. There is a verified backup of the original access rules.',
+      care:'Everyone should be able to read their materials. We will restore just the access they need.',reply:'Exactly. Please protect the tutors’ originals as well.',
+      resolution:'Students can read the notes again without changing the originals. I checked the lesson too; it is intact.',lesson:'Inspect permissions and the backup, restore the approved access rules, then verify least privilege and file integrity.'}
+  ];
+  for (const item of cases) item.progress = makeProgress();
+  const caseById = id => cases.find(item => item.id === id);
+  const people = cases.map((item,i) => ({id:['amina','leo','mei','noor','iris'][i],caseId:item.id,name:item.person,x:item.x,z:item.z,color:item.color,skin:['#b87d59','#e3ab7d','#deb18d','#aa7256','#8e6049'][i],hair:['#253340','#4b3027','#242633','#514065','#35292b'][i],kind:'customer',complete:false,title:item.person+' · '+item.role,desc:item.story}));
+  objects.push(...people);
+  const devices = [
+    {id:'identity',caseId:'account',x:39,z:-1.7,title:'ID DESK · IDENTITY WORKSTATION',desc:'Isolated account administration practice · no real accounts are changed.',diag:'Inspect Leo’s lockout state and confirm his staff badge before unlocking.',hint:'Get-ADUser leo -Properties LockedOut → Unlock-ADAccount leo → Test-ADLogin leo'},
+    {id:'printdesk',caseId:'print',x:51,z:-1.7,title:'PRINT DESK · WINDOWS SERVICES',desc:'Isolated print-service practice · queued student work is preserved.',diag:'Compare the waiting print queue with the Spooler service state.',hint:'Get-PrintJob -PrinterName LabPrinter → Get-Service Spooler → Restart-Service Spooler → Test-Printer LabPrinter'},
+    {id:'linux',caseId:'disk',x:42,z:-4.5,title:'LINUX LAB · APPLICATION SERVER',desc:'Isolated Linux practice · only approved disposable cache files can be removed.',diag:'Inspect filesystem use and locate the approved lab cache. Protect /srv/student-work.',hint:"df -h → du -sh /var/tmp/lab-cache → sudo find /var/tmp/lab-cache -type f -name '*.tmp' -delete → df -h → systemctl status learning-app"},
+    {id:'fileserver',caseId:'files',x:54,z:-4.5,title:'LIBRARY · COURSE FILE SERVER',desc:'Isolated file-permission practice · protect originals and grant least privilege.',diag:'Inspect the current ACL and verify the backup before restoring approved read access.',hint:'Get-Acl C:\\Shared\\Coursework → Get-BackupStatus C:\\Shared\\Coursework → Restore-Acl C:\\Shared\\Coursework -FromBackup → Test-FileAccess C:\\Shared\\Coursework -User students -Access Read → Get-FileHash C:\\Shared\\Coursework\\lesson.pdf'}
+  ];
+  for (const item of devices) item.kind = 'admin';
+  objects.push(...devices);
+  const gentleHints = {
+    account:['An account lockout is different from forgetting a password. Start by reading the account state.','Ask Leo to show his staff badge, inspect LockedOut, then unlock only his account. He should test sign-in privately.'],
+    print:['Several waiting jobs and a Ready printer suggest a shared service problem rather than an empty paper tray.','Inspect both the print queue and Spooler. Preserve the jobs; restart the affected service, then send one test page.'],
+    disk:['A healthy app still cannot save if the filesystem has no room. Measure before removing anything.','Compare df with the approved cache size. Remove only approved *.tmp files; recheck free space and the app write test.'],
+    files:['Being able to see a folder does not guarantee permission to read its files. Inspect the ACL and a trusted backup.','Restore the approved Students-read/Tutors-modify rules. Verify both student read access and the original lesson hash.']
+  };
+  let selected = 'network', dialogKind = '', focusedBefore = null;
+  const style = document.createElement('style');
+  style.textContent = `
+    #campusDialog[hidden]{display:none!important}#campusDialog{position:fixed;inset:0;z-index:110;background:#04101bdd;backdrop-filter:blur(9px);display:flex;align-items:center;justify-content:center;padding:20px;box-sizing:border-box;color:#eaf7f7}
+    #campusDialogPanel{width:min(860px,100%);max-height:88dvh;overflow:auto;background:#102b37;border:1px solid #567b86;border-radius:24px;box-shadow:0 26px 100px #0008;padding:26px;box-sizing:border-box;font:15px/1.6 system-ui}
+    #campusDialog header{display:flex;align-items:flex-start;justify-content:space-between;gap:15px;margin-bottom:18px}#campusDialog h2{font-size:26px;line-height:1.2;margin:5px 0;color:#f0fffc}#campusDialog h3{margin:0;color:#f0fffc;font-size:18px}#campusDialog p{margin:10px 0}#campusDialog button{white-space:normal;text-align:left;line-height:1.4}#campusDialog button:focus-visible{outline:3px solid #ffdb92;outline-offset:3px}#campusDialog button:disabled{opacity:.5;cursor:not-allowed}#campusDialogClose{white-space:nowrap!important}
+    .campusEyebrow{font-size:11px;font-weight:800;letter-spacing:1.8px;color:#9cdcd4}.campusIntro{color:#b8d3d7}.campusCards{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin-top:20px}.campusCaseCard{border:1px solid #436570;border-radius:16px;padding:18px;background:#173541;display:flex;flex-direction:column;gap:8px}.campusCaseCard[data-complete=true]{border-color:#5caa8e}.campusCaseCard p{font-size:13px;color:#bfd7da;flex:1}.campusStatus{font-size:12px;color:#a7e6d0}.campusTag{display:inline-block;font-size:11px;border:1px solid #547a7d;border-radius:20px;padding:3px 9px;color:#b8efe2;margin:2px 6px 2px 0}.campusDialogue{display:grid;grid-template-columns:90px 1fr;gap:20px}.campusAvatar{width:78px;height:78px;border-radius:25px;display:grid;place-items:center;font-size:38px;color:#152f3d;box-shadow:inset 0 -8px 0 #0001}.campusSpeech{background:#1c3d48;border:1px solid #456773;border-radius:4px 18px 18px 18px;padding:17px;color:#e3f0f2}.campusActions{display:flex;flex-wrap:wrap;gap:9px;margin-top:16px}.campusActions button{flex:1 1 240px;padding:13px 15px;background:#214957}.campusActions button.primary{background:#b9eadb;color:#102e36;border-color:#b9eadb;font-weight:750}.campusEvidence{background:#122c34;border-left:3px solid #edc575;border-radius:0 10px 10px 0;padding:12px 15px;margin-top:15px;color:#dce8d7}.campusNote{font-size:12px;color:#9cbfc6;margin-top:15px}.campusProgress{display:flex;gap:5px;flex-wrap:wrap;margin:18px 0}.campusProgress span{font-size:11px;border-bottom:3px solid #3b5963;color:#91b4bc;padding:5px 8px}.campusProgress span.done{border-color:#7ce3bc;color:#bbf8e1}.campusProgress span.current{border-color:#f3cb80;color:#ffe1ae}
+    #campusSummary{margin-top:13px;padding-top:12px;border-top:1px solid #416675;color:#c5e8e8;font-size:12px}#campusSummary b{display:block;color:#b7f5de}#campusSummary small{color:#bad1d5}#caseBoardBtn{background:#bce8d7;color:#123c42;border-color:#bce8d7;font-weight:750}.campusNotebookLink{margin-top:8px;font-size:12px;color:#e9cc91;cursor:pointer;text-decoration:underline;background:transparent;border:0;padding:0}#campusDialog .campusCallout{padding:14px 16px;border-radius:13px;background:#275449;color:#d8ffe7}
+    #campusCaseNotes{padding:11px 14px;border:1px solid #416773;border-radius:12px;margin:12px 0;background:#102d36;font-size:12px;color:#cce4df}#campusCaseNotes[hidden]{display:none}#campusCaseNotes summary{cursor:pointer;color:#b3f0dc;font-weight:700}#campusCaseNotes ul{list-style:none;margin:10px 0 0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:5px 12px}#campusCaseNotes li[data-done=true]{color:#89e8bf}#campusCaseNotes p{color:#aac9cd}.campusCaseCard details{font-size:12px;color:#b8d7d7}.campusCaseCard summary{cursor:pointer}
+    @media(max-width:650px){#campusDialog{padding:9px}#campusDialogPanel{padding:20px;max-height:92dvh;border-radius:18px}.campusCards{grid-template-columns:1fr}.campusDialogue{grid-template-columns:1fr;gap:10px}.campusAvatar{width:58px;height:58px;font-size:28px}.campusActions button{flex-basis:100%}#campusDialog h2{font-size:22px}}
+  `;
+  document.head.append(style);
+  const dialog = document.createElement('div');
+  dialog.id = 'campusDialog';dialog.hidden = true;dialog.setAttribute('role','dialog');dialog.setAttribute('aria-modal','true');dialog.setAttribute('aria-labelledby','campusDialogTitle');
+  dialog.innerHTML = '<section id="campusDialogPanel" tabindex="-1"><header><div><div class="campusEyebrow" id="campusDialogEyebrow">CAMPUS SUPPORT</div><h2 id="campusDialogTitle"></h2></div><button id="campusDialogClose" aria-label="Close support dialogue">✕ Close</button></header><div id="campusDialogBody"></div></section>';
+  document.body.append(dialog);
+  const summary = document.createElement('div');summary.id='campusSummary';$('hud').append(summary);
+  const caseNotes=document.createElement('details');caseNotes.id='campusCaseNotes';caseNotes.hidden=true;caseNotes.open=true;$('desc').after(caseNotes);
+  const launcher = document.createElement('button');launcher.id='caseBoardBtn';launcher.textContent='♥ Support tickets';launcher.onclick=()=>openBoard();$('bottom').prepend(launcher);
+  const escapeHTML = value => String(value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const networkReady = () => mission.every(([key]) => state[key]);
+  function status(id) {
+    const item = caseById(id);if(!item)return null;const p=item.progress;
+    if(id==='network' && networkReady()){p.fixed=true;p.verified=true;}
+    const diagnosed=id==='network'?p.accepted:id==='account'?!!p.diagnostics.account:id==='print'?!!(p.diagnostics.queue&&p.diagnostics.service):id==='disk'?!!(p.diagnostics.disk&&p.diagnostics.cache):!!(p.diagnostics.acl&&p.diagnostics.backup);
+    const phase=p.confirmed?'complete':p.verified?'customer':p.fixed?'verify':diagnosed?'repair':p.accepted?'diagnose':'meet';
+    return {...p,id,diagnosed,complete:p.confirmed,resolved:p.confirmed,phase};
+  }
+  function evidenceItems(item) {
+    const p=item.progress;
+    if(item.id==='account')return [['Customer request understood',p.accepted],['Staff badge verified',p.identityVerified],['Lockout state inspected',p.diagnostics.account],['Affected account unlocked',p.fixed],['Private sign-in test passed',p.verified],['Customer can work again',p.confirmed]];
+    if(item.id==='print')return [['Customer request understood',p.accepted],['Print queue inspected',p.diagnostics.queue],['Spooler service inspected',p.diagnostics.service],['Service restarted; jobs preserved',p.fixed],['Test page printed',p.verified],['Customer posters confirmed',p.confirmed]];
+    if(item.id==='disk')return [['Customer request understood',p.accepted],['Filesystem measured',p.diagnostics.disk],['Approved cache measured',p.diagnostics.cache],['Only approved temp files removed',p.fixed],['Free space checked after cleanup',p.diagnostics.space],['Application write test passed',p.verified],['Customer saving confirmed',p.confirmed]];
+    if(item.id==='files')return [['Customer request understood',p.accepted],['Current permissions inspected',p.diagnostics.acl],['Trusted backup verified',p.diagnostics.backup],['Least privilege rules restored',p.fixed],['Student read access verified',p.diagnostics.access],['Lesson integrity verified',p.diagnostics.hash],['Customer access confirmed',p.confirmed]];
+    return [['Customer request understood',p.accepted],...mission.map(([key,label])=>[label,state[key]]),['Classroom recovery confirmed',p.confirmed]];
+  }
+  function updateCaseNotes() {
+    if(active?.kind!=='admin'){caseNotes.hidden=true;return;}
+    caseNotes.hidden=false;const item=caseById(active.caseId);
+    const html='<summary>CASE NOTES · '+escapeHTML(item.person)+' · '+escapeHTML(phaseText(item))+'</summary><p>'+escapeHTML(item.story)+'</p><ul>'+evidenceItems(item).map(([label,done])=>'<li data-done="'+!!done+'">'+(done?'✓ ':'○ ')+escapeHTML(label)+'</li>').join('')+'</ul>';
+    if(caseNotes.innerHTML!==html)caseNotes.innerHTML=html;
+  }
+  function progressMarkup(item) {
+    const p=status(item.id), done=[p.accepted,p.diagnosed,p.fixed,p.verified,p.complete];let current=done.findIndex(v=>!v);
+    return '<div class="campusProgress" aria-label="Case progress">'+['Listen','Diagnose','Repair','Verify','Check back'].map((label,i)=>'<span class="'+(done[i]?'done':i===current?'current':'')+'">'+(done[i]?'✓ ':'')+label+'</span>').join('')+'</div>';
+  }
+  const phaseText = item => ({meet:'Meet '+item.person,diagnose:'Investigate the symptom',repair:'Repair with care',verify:'Verify the outcome',customer:'Check back with '+item.person,complete:'Resolved together'})[status(item.id).phase];
+  function updateSummary() {
+    for (const p of people) p.complete=status(p.caseId).complete;
+    const complete=cases.filter(item=>status(item.id).complete).length,item=caseById(selected);
+    const html='<b>PEOPLE FIRST · '+complete+' / '+cases.length+' stories resolved</b><span>'+escapeHTML(item.title)+'</span><br><small>Support XP: '+(complete*300)+' / 1500<br>'+escapeHTML(phaseText(item))+' · Support tickets for details</small>';
+    if(summary.innerHTML!==html)summary.innerHTML=html;
+    updateCaseNotes();
+  }
+  function openShell(title,eyebrow,kind) {
+    if(dialog.hidden)focusedBefore=document.activeElement;
+    keys.clear();opened=true;active=null;$('overlay').style.display='none';
+    dialog.hidden=false;dialogKind=kind;$('campusDialogTitle').textContent=title;$('campusDialogEyebrow').textContent=eyebrow;
+  }
+  function focusDialog(){requestAnimationFrame(()=>{if(!dialog.hidden)$('campusDialogPanel').focus()})}
+  function closeDialog(){leave()}
+  $('campusDialogClose').onclick=closeDialog;
+  dialog.addEventListener('click',event=>{if(event.target===dialog)closeDialog()});
+  dialog.addEventListener('keydown',event=>{
+    if(event.key==='Escape'){event.preventDefault();event.stopImmediatePropagation();closeDialog();return;}
+    if(event.key!=='Tab')return;
+    const controls=[...dialog.querySelectorAll('button:not(:disabled),[href],input,select,textarea,[tabindex="0"]')].filter(el=>el.getClientRects().length);
+    const first=controls[0],last=controls[controls.length-1];
+    if(!first){event.preventDefault();return;}
+    if(event.shiftKey&&(document.activeElement===first||document.activeElement===$('campusDialogPanel'))){event.preventDefault();last.focus()}
+    else if(!event.shiftKey&&(document.activeElement===last||document.activeElement===$('campusDialogPanel'))){event.preventDefault();first.focus()}
+  });
+  function openBoard() {
+    if(!started)return;
+    openShell('Small acts. Big difference.','CAMPUS SUPPORT BOARD','board');
+    $('campusDialogBody').innerHTML='<p class="campusIntro">People have stories, not just error codes. Explore at your own pace, ask a useful question, protect their work, and check that your repair actually helped. No timer. No lost lives.</p><div class="campusCards">'+cases.map(item=>'<article class="campusCaseCard" data-complete="'+status(item.id).complete+'"><span class="campusEyebrow" style="color:'+item.color+'">'+item.category+'</span><h3>'+escapeHTML(item.title)+'</h3><p>'+escapeHTML(item.person+' · '+item.role)+'</p><div class="campusStatus">'+escapeHTML(phaseText(item))+'</div>'+progressMarkup(item)+'<details><summary>Case notes & evidence</summary><p>'+evidenceItems(item).map(([label,done])=>(done?'✓ ':'○ ')+escapeHTML(label)).join('<br>')+'</p></details><button '+(selected===item.id?'class="primary" ':'')+'data-case-track="'+item.id+'">'+(selected===item.id?'✓ Tracking this story':'Track this story')+'</button></article>').join('')+'</div><p class="campusNote">All accounts, commands, files and people in this campus are fictional. Console commands run only in this educational simulation. Progress stays in this play session.</p>';
+    for(const button of dialog.querySelectorAll('[data-case-track]'))button.onclick=()=>{track(button.dataset.caseTrack);closeDialog();toast('Following: '+caseById(selected).title+'. Look for the gold path.');};
+    focusDialog();
+  }
+  function track(id) {if(!caseById(id))return false;selected=id;updateSummary();return true;}
+  function button(label,action,primary=false,disabled=false) {return '<button '+(primary?'class="primary" ':'')+'data-case-action="'+action+'" '+(disabled?'disabled':'')+'>'+escapeHTML(label)+'</button>';}
+  function talk(value) {
+    if(!started)return;
+    const item=typeof value==='string'?caseById(value):caseById(value?.caseId);if(!item)return;
+    const p=item.progress,s=status(item.id);track(item.id);
+    openShell(item.person+' · '+item.title,item.category,'customer:'+item.id);
+    let content='<div class="campusDialogue"><div class="campusAvatar" style="background:'+item.color+'" aria-hidden="true">'+['☺','☺','☺','☺','☺'][cases.indexOf(item)]+'</div><div><span class="campusEyebrow">'+escapeHTML(item.role)+'</span><div class="campusSpeech">'+escapeHTML(s.complete?item.resolution:p.verified?'The checks look good. Shall we try it together and make sure I can do my work again?':item.story)+'</div></div></div>'+progressMarkup(item);
+    if(p.listened)content+='<div class="campusEvidence"><strong>What you learned</strong><br>'+escapeHTML(item.answer)+'</div>';
+    if(p.acknowledged)content+='<p class="campusIntro">'+escapeHTML(p.empathy?item.reply:'Thanks for the update. Please let me know what you find.')+'</p>';
+    if(s.complete)content+='<div class="campusCallout">♥ '+escapeHTML(item.person)+' feels supported. '+escapeHTML(item.lesson)+'</div><p><span class="campusTag">Careful troubleshooting</span>'+(p.empathy?'<span class="campusTag">Listened with care</span>':'')+'<span class="campusTag">Verified together</span></p>';
+    else {
+      content+='<div class="campusActions">';
+      if(!p.listened)content+=button(item.question,'listen');
+      if(!p.acknowledged)content+=button(item.care,'empathy')+button('I will investigate and keep you updated.','acknowledge');
+      if(!p.accepted)content+=button('I can help. Accept this support request.','accept',true,!p.listened||!p.acknowledged);
+      else if(item.id==='account'&&!p.identityVerified)content+=button('Verify Leo’s staff badge against the directory record.','identity',true);
+      if(p.verified&&p.accepted)content+=button('Test together and ask: “Can you do your work now?”','confirm',true);
+      else if(p.accepted)content+=button('Head to '+(item.id==='network'?'the network lab':devices.find(d=>d.caseId===item.id).title.split(' · ')[0])+'.','continue',item.id!=='account'||p.identityVerified);
+      content+='</div>';
+      if(!p.accepted)content+='<p class="campusNote">Start by understanding the symptom and acknowledging the person. Your response never costs points; there is space to learn.</p>';
+      if(item.id==='account'&&p.identityVerified)content+='<div class="campusEvidence">✓ Staff badge matched the directory. Leo’s password stays private. You may inspect and unlock only this training account.</div>';
+    }
+    content+='<p class="campusNote">'+escapeHTML(item.lesson)+'</p>';
+    $('campusDialogBody').innerHTML=content;
+    for(const b of dialog.querySelectorAll('[data-case-action]'))b.onclick=()=>customerAction(item.id,b.dataset.caseAction);
+    focusDialog();
+  }
+  function customerAction(id,action) {
+    const item=caseById(id);if(!item)return false;const p=item.progress;
+    if(action==='listen'){p.listened=true;tone(580,.09,'sine',.03)}
+    else if(action==='empathy'||action==='acknowledge'){p.acknowledged=true;p.empathy=action==='empathy';}
+    else if(action==='accept') {if(!p.listened||!p.acknowledged)return false;p.accepted=true;toast('Support request accepted. Take your time and protect their work.');}
+    else if(action==='identity') {if(id!=='account'||!p.accepted)return false;p.identityVerified=true;toast('Identity confirmed without asking for a password.');}
+    else if(action==='confirm') {if(!p.accepted||!status(id).verified||p.confirmed)return false;p.confirmed=true;people.find(person=>person.caseId===id).complete=true;toast(item.person+' is back on track. Support complete · +300 XP');}
+    else if(action==='continue'){closeDialog();updateSummary();return true;}
+    else return false;
+    updateSummary();talk(id);return true;
+  }
+  const originalEnter=enter,originalLeave=leave,originalRun=run,originalGuide=updateGuide,originalTarget=stageTarget,originalRefresh=refresh;
+  enter=function(target) {
+    if(target?.kind==='customer'){talk(target.caseId);return;}
+    if(!target||target.kind!=='admin'){originalEnter(target);updateCaseNotes();return;}
+    if(!started)return;
+    dialog.hidden=true;dialogKind='';keys.clear();originalEnter(target);
+    $('terminal').textContent='CAMPUS CARE · ISOLATED TRAINING CONSOLE\n'+target.title+'\n\nNothing here accesses your computer, network, accounts or files.\nPowerShell Test-*, Get-BackupStatus and Restore-Acl are lab helpers, not built-in commands.\nType help for a guided command reference.\n\n';
+    $('helper').textContent=caseById(target.caseId).progress.accepted?target.diag:'Speak with '+caseById(target.caseId).person+' and accept the request before making changes. Read-only inspection is available.';
+    $('cmd').placeholder='Simulated command · help for a reference';
+    updateCaseNotes();
+  };
+  leave=function() {const hadOwn=!dialog.hidden;dialog.hidden=true;dialogKind='';originalLeave();if(hadOwn&&focusedBefore?.isConnected)focusedBefore.focus();focusedBefore=null;};
+  $('close').onclick=()=>leave();
+  const explain=(message)=>line(message);
+  function markVerified(item) {
+    if(!item.progress.verified){item.progress.verified=true;toast('Technical checks passed. Check back with '+item.person+' to make sure it helped.');}
+    updateSummary();
+  }
+  function handleAdmin(raw) {
+    const item=caseById(active.caseId),p=item.progress,cmd=raw.trim().replace(/\s+/g,' ').toLowerCase();if(!cmd)return;
+    line((item.id==='disk'?'student@lab:~$ ':'PS LAB:\\> ')+raw.trim());tone(500,.04,'triangle',.025);
+    if(cmd==='help'||cmd==='?'){line(active.hint.replace(/ → /g,'\n'));line('\nRead-only inspection is always safe here. Accept the request before repairs. Verification is required, then check back with the person.');return;}
+    const authorized=()=>{if(!p.accepted){line('First speak with '+item.person+' and accept the request. Changes need context and consent.');return false;}return true;};
+    if(item.id==='account') {
+      if(/^get-aduser (?:-identity )?leo -properties lockedout$/.test(cmd)) {p.diagnostics.account=true;line('SamAccountName : leo\nEnabled        : True\nLockedOut      : '+(p.fixed?'False':'True')+'\nReason         : Three failed sign-in attempts\nScope          : Fictional lab account only');}
+      else if(/^unlock-adaccount (?:-identity )?leo$/.test(cmd)) {if(!authorized())return;if(!p.identityVerified){line('Identity has not been confirmed. Ask Leo to show his staff badge; never ask for his password.');return;}if(!p.diagnostics.account){line('Inspect the account with Get-ADUser before changing it.');return;}p.fixed=true;line('Leo’s training account is unlocked. No password was read or changed. Verify with Test-ADLogin leo (lab helper).');}
+      else if(cmd==='test-adlogin leo') {if(!p.fixed){line('Sign-in blocked: account remains locked. Inspect the cause and verify identity before unlocking.');return;}line('SIMULATED USER SIGN-IN: PASS\nLeo signs in privately. No password is collected. Check back with Leo.');markVerified(item);}
+      else if(/password|set-adaccountpassword|set-aduser/.test(cmd))line('No password reset is needed for this lockout. Verify identity and unlock only the affected account. Never collect a person’s password.');
+      else line('Command is outside this training account or is not supported. Type help for the exact lab commands.');
+    } else if(item.id==='print') {
+      if(cmd==='get-printjob -printername labprinter'){p.diagnostics.queue=true;line('Printer     JobId Document             Status\nLabPrinter  14    Welcome-posters.pdf  '+(p.fixed?'Printing':'Waiting')+'\nLabPrinter  15    Campus-map.pdf       '+(p.fixed?'Printing':'Waiting')+'\nHardware reports Ready. Existing jobs will be preserved.');}
+      else if(cmd==='get-service spooler'){p.diagnostics.service=true;line('Status   Name       DisplayName\n'+(p.fixed?'Running':'Stopped')+'  Spooler    Print Spooler');}
+      else if(cmd==='restart-service spooler'){if(!authorized())return;if(!p.diagnostics.queue||!p.diagnostics.service){line('Inspect both the print queue and Spooler service first. A restart should follow evidence.');return;}p.fixed=true;line('Print Spooler is Running. Existing jobs retained. Verify with Test-Printer LabPrinter (lab helper).');}
+      else if(cmd==='test-printer labprinter'){if(!p.fixed){line('Test page could not be submitted: Print Spooler is stopped.');return;}line('SIMULATED TEST PAGE: printed successfully.\nQueue resumes without duplicate jobs. Ask Mei to confirm her posters print.');markVerified(item);}
+      else if(/remove-printjob|clear|delete|stop-service/.test(cmd))line('The queue contains student work. Diagnose the service and preserve the jobs; deleting them is unnecessary.');
+      else line('This console supports the LabPrinter queue and Spooler service only. Type help.');
+    } else if(item.id==='disk') {
+      if(cmd==='df -h'){p.diagnostics.disk=true;if(p.fixed)p.diagnostics.space=true;line('Filesystem      Size Used Avail Use% Mounted on\n/dev/lab-root    20G  '+(p.fixed?'12G  8G    60%':'20G  0     100%')+' /\nStudent submissions: preserved in /srv/student-work');}
+      else if(cmd==='du -sh /var/tmp/lab-cache'){p.diagnostics.cache=true;line((p.fixed?'12M':'8.0G')+' /var/tmp/lab-cache\nApproved disposable files: *.tmp. Do not touch /srv/student-work.');}
+      else if(/^sudo find \/var\/tmp\/lab-cache -type f -name ['"]\*\.tmp['"] -delete$/.test(cmd)){if(!authorized())return;if(!p.diagnostics.disk||!p.diagnostics.cache){line('Inspect the filesystem and measure the approved cache before deleting disposable files.');return;}p.fixed=true;line('Removed only approved *.tmp cache files under /var/tmp/lab-cache.\nStudent submissions and non-temporary files are unchanged.\nVerify free space with df -h, then check the learning app.');}
+      else if(cmd==='systemctl status learning-app'){if(!p.fixed){line('learning-app.service: degraded\nCannot write quiz progress: No space left on device.');return;}if(!p.diagnostics.space){line('App restarted successfully, but first verify available space with df -h.');return;}line('learning-app.service: active (running)\nWrite probe: PASS\nStudent submissions: intact\nAsk Noor to try saving a quiz attempt.');markVerified(item);}
+      else if(/(^| )rm |find .*delete|cleanup|\/srv\/student-work/.test(cmd))line('Cleanup rejected. Protect student work and use only the approved, measured *.tmp cache. Type help for the narrowly scoped command.');
+      else line('This isolated Linux exercise supports df, the approved cache measurement/cleanup, and the learning-app health check. Type help.');
+    } else if(item.id==='files') {
+      if(cmd==='get-acl c:\\shared\\coursework'){p.diagnostics.acl=true;line('Path: C:\\Shared\\Coursework\nTutors    : Modify\nStudents  : '+(p.fixed?'ReadAndExecute':'No matching allow entry')+'\nInheritance: Protected\nRequired access: Students read only; tutors retain Modify.');}
+      else if(cmd==='get-backupstatus c:\\shared\\coursework'){p.diagnostics.backup=true;line('LAB BACKUP HELPER\nVerified ACL backup: available\nApproved rules: Tutors=Modify, Students=ReadAndExecute\nlesson.pdf SHA256 reference: 9A41C7D2-LAB-REFERENCE\nRestore only permissions; preserve all content.');}
+      else if(cmd==='restore-acl c:\\shared\\coursework -frombackup'){if(!authorized())return;if(!p.diagnostics.acl||!p.diagnostics.backup){line('Inspect the current ACL and verify the approved backup before restoring access rules.');return;}if(!p.fixed){p.diagnostics.access=false;p.diagnostics.hash=false;}p.fixed=true;line('LAB RESTORE HELPER: approved ACL restored.\nStudents=ReadAndExecute; Tutors=Modify. No Everyone access added.\nVerify student access and the lesson hash.');}
+      else if(cmd==='test-fileaccess c:\\shared\\coursework -user students -access read'){if(!p.fixed){line('Access check: DENIED for Students. Review the ACL and approved backup.');return;}p.diagnostics.access=true;line('LAB ACCESS HELPER\nStudents read: ALLOWED\nStudents write: DENIED (expected)\nTutors modify: ALLOWED\nLeast privilege: PASS');if(p.diagnostics.hash)markVerified(item);}
+      else if(cmd==='get-filehash c:\\shared\\coursework\\lesson.pdf'){if(!p.diagnostics.backup){line('A hash needs a trusted reference. Inspect the backup status first.');return;}p.diagnostics.hash=true;line('Algorithm: SHA256\nHash: 9A41C7D2-LAB-REFERENCE (abbreviated in this simulation)\nBackup reference match: PASS\nLesson content is intact.');if(p.fixed&&p.diagnostics.access)markVerified(item);}
+      else if(/everyone|fullcontrol|777|icacls|set-acl/.test(cmd))line('Broad access is unnecessary. Restore the verified ACL: Students read only, tutors modify. This practice console blocks unrestricted permission changes.');
+      else line('Use the exact course-folder path. Get-BackupStatus, Restore-Acl and Test-FileAccess are explained lab helpers. Type help.');
+    }
+    updateSummary();
+  }
+  run=function(raw){if(active?.kind==='admin'){handleAdmin(raw);return;}return originalRun(raw);};
+  stageTarget=function(){const item=caseById(selected),s=status(selected);if(!s.accepted||s.verified&&!s.complete||item.id==='account'&&!s.identityVerified)return people.find(p=>p.caseId===selected);if(s.complete)return selected==='network'?originalTarget():null;return item.id==='network'?originalTarget():devices.find(d=>d.caseId===selected);};
+  updateGuide=function(){originalGuide();updateSummary();const item=caseById(selected),s=status(selected);if(item.id!=='network'||!s.accepted||s.verified){$('nextTask').textContent=s.complete?item.person+' is back on track. Open Support tickets for another story.':s.phase==='meet'?'Meet '+item.person+' and listen to their story':item.id==='account'&&!s.identityVerified?'Confirm Leo’s staff badge before account changes':s.verified?'Check back with '+item.person+' · verify together':item.title+' · '+phaseText(item);}};
+  refresh=function(){originalRefresh();updateSummary();};
+  const oldDiagnose=$('diagnose').onclick,oldHint=$('hint').onclick;
+  $('diagnose').onclick=()=>{if(active?.kind==='admin'){const item=caseById(active.caseId);$('helper').textContent=item.progress.accepted?active.diag:'First listen to '+item.person+' and accept the request. Inspection commands are listed under Commands.';}else oldDiagnose();};
+  $('hint').onclick=()=>{if(active?.kind==='admin'){const item=caseById(active.caseId),level=Math.min(item.progress.hintLevel,2);$('helper').textContent='Hint '+(level+1)+' / 3 · '+(level<2?gentleHints[item.id][level]:active.hint);item.progress.hintLevel=Math.min(level+1,2);}else oldHint();};
+  const oldReset=$('reset').onclick;
+  $('reset').onclick=function(...args){
+    // The legacy handler owns the confirmation. Observe its actual result so a
+    // cancelled reset cannot silently discard a customer conversation.
+    const previousConfirm=window.confirm;let confirmed=false;
+    window.confirm=function(...promptArgs){const result=previousConfirm.apply(window,promptArgs);if(result)confirmed=true;return result;};
+    try{oldReset.apply(this,args);}finally{window.confirm=previousConfirm;}
+    if(confirmed){for(const item of cases)item.progress=makeProgress();for(const person of people)person.complete=false;selected='network';dialog.hidden=true;dialogKind='';updateSummary();}
+  };
+  const oldStart=$('start').onclick;
+  $('start').onclick=function(...args){oldStart.apply(this,args);toast('Welcome to campus! Meet Amina at the support desk, or choose a story from Support tickets.');};
+  window.CampusCases={cases,caseById,people,devices,track,talk,openBoard,customerAction,status,evidenceItems,get supportXP(){return cases.filter(item=>status(item.id).complete).length*300;},get selected(){return selected;},get dialogKind(){return dialogKind;}};
+  updateSummary();
+})();
+
+
+/* Campus art is drawn by the existing offline renderer; no asset downloads. */
+(() => {
+  'use strict';
+  const clock = () => performance.now() / 1000;
+  const animation = { name: 'idle', since: 0, until: 0, duration: 1.5 };
+  const metrics = { peopleDrawn: 0, sceneryDraws: 0, robotDraws: 0 };
+  const floorArt = [];
+  const collisions = [
+    [30, -5.8, 3, 1], [29, 6.1, 3.4, 1], [29, -3.9, 1.6, .8],
+    [36.2, -6.2, 2, 1], [49, 6, 2.2, 1.4], [57, -6.7, 2, .6]
+  ];
+  function snapshot() {
+    const remaining = Math.max(0, animation.until - clock());
+    const action = remaining ? animation.name : celebration > .15 ? 'cheer' : 'idle';
+    const progress = remaining ? 1 - remaining / animation.duration : 0;
+    return { action, progress, remaining, reducedMotion,
+      hopHeight: reducedMotion || action !== 'hop' ? 0 : Math.sin(progress * Math.PI) * .48,
+      robotFacing: player.dir, peopleDrawn: metrics.peopleDrawn,
+      sceneryDraws: metrics.sceneryDraws, robotDraws: metrics.robotDraws };
+  }
+  function action(name) {
+    if (!started || opened || !['wave', 'hop', 'cheer'].includes(name)) return false;
+    if (animation.until - clock() > .35) return false;
+    animation.name = name; animation.since = clock();
+    animation.duration = name === 'wave' ? 1.7 : 1.25;
+    animation.until = animation.since + animation.duration;
+    const people = window.CampusCases?.people || [];
+    const nearby = people.find(p => Math.hypot(p.x - player.x, p.z - player.z) < 5);
+    robotSay(name === 'wave' ? (nearby ? 'Hi, ' + nearby.name + '! I’m here to help.' : 'A friendly hello goes a long way!') :
+      name === 'hop' ? 'A little joy, then back to helping our campus!' : 'Every small repair makes someone’s day better.');
+    tone(name === 'wave' ? 560 : 740, .10, 'sine', .055);
+    if (name !== 'wave') setTimeout(() => tone(930, .12, 'sine', .045), 120);
+    return true;
+  }
+  // An octagonal front silhouette gives characters soft corners at a low polygon count.
+  function softBox(x, y, z, w, h, d, color, radius = .08) {
+    const r = Math.min(radius, w / 3, h / 3), a = w / 2, b = h / 2;
+    const outline = [[-a+r,-b],[a-r,-b],[a,-b+r],[a,b-r],[a-r,b],[-a+r,b],[-a,b-r],[-a,-b+r]];
+    const front = outline.map(([u,v]) => [x+u,y+v,z+d/2]);
+    const back = outline.map(([u,v]) => [x+u,y+v,z-d/2]);
+    polygon(front, color); polygon([...back].reverse(), tint(color,.72));
+    for(let i=0;i<8;i++) {
+      const j=(i+1)%8;
+      polygon([front[i],back[i],back[j],front[j]], tint(color, i===3||i===4 ? 1.13 : i===0||i===7 ? .68 : .86));
+    }
+  }
+  function heart(x,y,z,size,color) {
+    const outline=[[-.5,.12],[-.49,.34],[-.29,.47],[0,.28],[.29,.47],[.49,.34],[.5,.12],[0,-.4]];
+    polygon(outline.map(([u,v])=>[x+u*size,y+v*size,z]), color);
+  }
+  function rug(x,z,w,d,color) {
+    const a=w/2,b=d/2,r=.2;
+    const before=polys.length;
+    polygon([[-a+r,-b],[a-r,-b],[a,-b+r],[a,b-r],[a-r,b],[-a+r,b],[-a,b-r],[-a,-b+r]].map(([u,v])=>[x+u,.045,z+v]),color);
+    floorArt.push(...polys.splice(before));
+  }
+  function withTransform(transform, draw) {
+    const saved=modelTransform; modelTransform=transform;
+    try {draw();} finally {modelTransform=saved;}
+  }
+  function localAt(x,z,angle,draw) {
+    const c=Math.cos(angle),s=Math.sin(angle);
+    withTransform(v=>[x+v[0]*c+v[2]*s,v[1],z-v[0]*s+v[2]*c],draw);
+  }
+  function screen(x,z,w=1.1,style='identity') {
+    softBox(x,1.43,z,w,.65,.09,'#314959',.045);
+    box(x,1.44,z+.052,w-.1,.54,.015,['#133944']);
+    box(x,1.06,z,.07,.22,.07,['#6f8586']);
+    box(x,.975,z+.02,.4,.025,.25,['#93a9a3']);
+    const color=style==='identity'?'#91efd1':style==='linux'?'#edc589':'#94d4f7';
+    for(let i=0;i<4;i++) line3([x-w*.37,1.60-i*.11,z+.067],[x+w*(i%2?.13:.3),1.60-i*.11,z+.067],i===0?color:'#548990',i===0?3:2);
+  }
+  function desk(x,z,w=2.5,color='#c8ae89') {
+    shadow(x,z,w*.58,.8);
+    softBox(x,.93,z,w,.13,1.15,color,.05);
+    for(const s of [-1,1])box(x+s*(w/2-.16),.46,z,.10,.9,.9,['#52686a']);
+    box(x,.998,z+.36,.7,.025,.24,['#42565a']);
+    for(let i=0;i<5;i++)line3([x-.28+i*.13,1.014,z+.27],[x-.28+i*.13,1.014,z+.44],'#9eb4aa',1);
+    box(x+.61,1.01,z+.32,.12,.055,.2,['#82aba6']);
+  }
+  function lamp(x,z) {
+    box(x,.85,z,.035,1.7,.035,['#d2b481']);
+    softBox(x,1.72,z,.52,.3,.52,'#edd5a3',.08);
+    box(x,.05,z,.42,.06,.42,['#637c78']);
+  }
+  function sofa(x,z,width,color) {
+    shadow(x,z,width*.54,.65);
+    softBox(x,.34,z,width,.5,.95,color,.15);
+    softBox(x,.75,z-.36,width,.56,.22,color,.10);
+    for(const s of [-1,1])softBox(x+s*(width/2-.13),.61,z,.26,.45,.96,color,.10);
+    for(const offset of [-.6,.6])softBox(x+offset,.7,z-.19,.40,.36,.14,'#e5caa7',.10);
+  }
+  function book(x,y,z,color,w=.16,h=.34) {
+    box(x,y,z,w,h,.3,[color]);
+    line3([x-w*.35,y+h*.30,z+.154],[x+w*.35,y+h*.30,z+.154],'#efddbf',2);
+  }
+  function scenery() {
+    metrics.sceneryDraws++;
+    floorArt.length=0;
+    // Warm lounge: the central circulation lane is deliberately free of furniture.
+    if (Math.abs(player.x-27)<37 || viewMode==='robot') {
+      rug(28,-3.6,8.5,7.7,'#718b84');
+      desk(26,-3,3.7,'#d2b594');screen(26,-3.22,.95);
+      softBox(24.7,1.03,-3.1,.38,.12,.45,'#e6bc75',.04);
+      sofa(30,-5.8,3,'#d99d82');sofa(29,6.1,3.4,'#7daba1');
+      rug(29,5.8,5.1,2.7,'#8c9d88');
+      softBox(29,.4,-3.9,1.6,.11,.8,'#d6c2a0');
+      for(const s of [-1,1])box(29+s*.53,.20,-3.9,.08,.4,.48,['#546e68']);
+      book(28.7,.50,-3.8,'#e3aa83',.38,.07);
+      plant(32,-6.6);plant(23,6.4);lamp(31.9,-5.6);
+      box(27.2,2.05,-8.15,4.8,1.5,.07,['#ead0a6']);
+      box(27.2,2.05,-8.10,4.5,1.28,.04,['#527b79']);
+      floating('04 / THE HELPDESK',27.2,3.25,-8.05,'#ffe0b6',15);
+      floating('LISTEN · UNDERSTAND · HELP',27.2,2.1,-8.02,'#d3f5e5',12);
+      // A suggestion board gives this space a human, lived-in feel.
+      box(32.8,1.8,-8.1,1.2,1.45,.05,['#b99970']);
+      for(let i=0;i<4;i++)box(32.52+(i%2)*.52,2.13-Math.floor(i/2)*.58,-8.06,.38,.4,.01,[i%2?'#c8dfb6':'#f5d593']);
+    }
+    if(Math.abs(player.x-40)<37 || viewMode==='robot') {
+      rug(39,-3.1,8.3,7.8,'#536f7a');
+      desk(39,-3);screen(39,-3.2,1.2);
+      softBox(40.02,1.1,-3.1,.38,.25,.43,'#e8c683',.06);
+      box(40.02,1.24,-3.07,.18,.02,.17,['#9dbdb8']);
+      // Lock-shaped identity symbol on the workstation tower.
+      softBox(40.65,.39,-3,.46,.72,.62,'#748d99');
+      box(40.65,.55,-2.68,.08,.025,.015,['#8bf3bf']);
+      desk(36.2,-6.2,2,'#aab8af');
+      softBox(36.4,1.1,-6.2,.62,.2,.35,'#d8ab73');
+      for(let i=0;i<3;i++)line3([35.7+i*.22,1.02,-6.1],[35.7+i*.22,1.02,-5.8],'#d8d1aa',4);
+      shadow(42,-6,.8,.7);softBox(42,1.12,-6,1.15,2.2,1.1,'#344c5b',.08);
+      for(let i=0;i<5;i++) {
+        softBox(42,.36+i*.38,-5.43,.98,.29,.045,'#192e3c',.025);
+        for(let j=0;j<4;j++)line3([41.65+j*.15,.33+i*.38,-5.40],[41.65+j*.15,.45+i*.38,-5.40],'#5d7885',1);
+        box(42.36,.40+i*.38,-5.395,.05,.035,.015,[i%2?'#90e7b5':'#e2c483']);
+      }
+      floating('LINUX / SYSTEM HEALTH',42,2.56,-6,'#b7f0cd',11);
+      plant(44.8,6.3);plant(44.5,-6.4);
+      floating('05 / SYSTEMS WORKSHOP',40.1,3.25,-8.05,'#b7dcfb',15);
+      box(37.9,2.45,-8.11,2.7,.7,.05,['#d3d8bd']);
+      floating('SMALL CHANGES. SAFE SYSTEMS.',37.9,2.47,-8.04,'#d3f5e5',10);
+      // Wall clock with two readable hands.
+      softBox(44.2,2.65,-8.1,.65,.65,.05,'#ece0bf',.22);
+      line3([44.2,2.65,-8.05],[44.2,2.84,-8.05],'#3b6269',3);
+      line3([44.2,2.65,-8.04],[44.38,2.57,-8.04],'#3b6269',3);
+    }
+    if(Math.abs(player.x-52)<37 || viewMode==='robot') {
+      rug(52,-3.4,9.5,7.9,'#849782');
+      desk(51,-3,2.2,'#d4bc96');
+      softBox(51,1.28,-3,.99,.6,.77,'#b6c6c2',.10);
+      softBox(51,1.63,-3.07,.89,.10,.64,'#e4e5d9',.04);
+      box(51,1.2,-2.60,.70,.10,.04,['#28434c']);
+      polygon([[50.73,1.15,-2.58],[51.27,1.15,-2.58],[51.27,1.05,-2.28],[50.73,1.05,-2.28]],'#f0e9d4');
+      softBox(51.23,1.49,-2.59,.23,.12,.035,'#386f75',.025);
+      box(51.23,1.49,-2.568,.15,.055,.012,['#a1f0bd']);
+      floating('SHARED CAMPUS PRINTER',51,2.08,-3,'#fff0ba',11);
+      // A friendly compact storage cabinet, rather than another indistinguishable PC.
+      shadow(54,-6,.8,.7);softBox(54,.95,-6,1.22,1.82,.94,'#8c9fa0');
+      for(let i=0;i<4;i++) {
+        softBox(54,.40+i*.36,-5.51,1.04,.28,.05,'#304b56',.025);
+        box(54.39,.40+i*.36,-5.475,.04,.03,.015,['#92e6c0']);
+        line3([53.64,.40+i*.36,-5.474],[54.17,.40+i*.36,-5.474],'#859da1',2);
+      }
+      floating('CAMPUS / SHARED FILES',54,2.14,-6,'#c6f0d1',11);
+      // Reading nook, books and a tiny maker display add life without blocking tasks.
+      rug(49,6.0,4.5,2.7,'#bdaf89');desk(49,6,2.2,'#cfbda0');
+      book(48.65,1.08,6,'#83aaa4',.6,.14);book(49.15,1.06,5.9,'#d39e7f',.4,.10);
+      softBox(50.6,.45,6,.6,.75,.6,'#cba18b');
+      box(57,1.2,-6.7,2,2.4,.6,['#9d886c']);
+      for(let row=0;row<3;row++) {
+        box(57,.32+row*.7,-6.35,1.84,.06,.4,['#d1b58d']);
+        for(let i=0;i<7;i++)book(56.23+i*.235,.59+row*.7,-6.45,['#78a49e','#d6b77d','#b58d9d','#8098b1'][(i+row)%4],.16,.40+(i%2)*.08);
+      }
+      plant(57.4,6.4);plant(47.2,-6.7);lamp(51.1,6.3);
+      floating('06 / LIBRARY & MAKER SPACE',52.7,3.25,-8.05,'#ffe0a9',15);
+      box(49,2.2,-8.1,2,1.35,.06,['#d6c797']);
+      box(49,2.2,-8.06,1.8,1.15,.025,['#677e70']);
+      floating('IDEAS BELONG TO EVERYONE',49,2.25,-8.02,'#f6ecd2',10);
+    }
+    const people=window.CampusCases?.people || [];
+    metrics.peopleDrawn=0;
+    for(const p of people)if(Math.hypot(p.x-player.x,p.z-player.z)<40){drawPerson(p);metrics.peopleDrawn++;}
+  }
+  function drawPerson(person) {
+    const distance=Math.hypot(person.x-player.x,person.z-player.z);
+    const t=clock(),angle=distance<9?Math.atan2(player.x-person.x,player.z-person.z):Math.PI*.08;
+    const skin=person.skin||'#bc8d6e',hair=person.hair||'#3e3432',shirt=person.color||'#7fa9b1';
+    const bob=reducedMotion?0:Math.sin(t*1.7+person.x)*.012;
+    shadow(person.x,person.z,.36,.24);
+    localAt(person.x,person.z,angle,()=>{
+      softBox(0,.94+bob,0,.53,.64,.32,shirt,.09);
+      softBox(0,1.52+bob,0,.43,.46,.40,skin,.12);
+      softBox(0,1.74+bob,-.035,.46,.16,.42,hair,.07);
+      softBox(-.17,1.62+bob,-.06,.14,.29,.36,hair,.05);
+      if(person.id==='mei'||person.id==='iris')softBox(.18,1.57+bob,-.10,.14,.36,.34,hair,.05);
+      for(const side of [-1,1]){
+        softBox(side*.15,.37,0,.20,.65,.24,'#40576b',.035);
+        softBox(side*.15,.085,.06,.24,.15,.38,'#2c414c',.05);
+        const gesture=!reducedMotion&&distance<5?Math.sin(t*2+side)*.035:0;
+        softBox(side*.33,.99+bob+gesture,.025,.14,.47,.21,shirt,.04);
+        softBox(side*.33,.75+bob+gesture,.04,.14,.16,.17,skin,.045);
+        box(side*.09,1.54+bob,.208,.035,.04,.012,['#293c45']);
+      }
+      line3([-.07,1.42+bob,.21],[0,1.40+bob,.22],'#935e50',2);
+      line3([0,1.40+bob,.22],[.07,1.42+bob,.21],'#935e50',2);
+      box(-.13,1.14+bob,.17,.11,.12,.015,['#f5dfb5']);
+    });
+    if(distance<10){
+      floating(person.name,person.x,2.12,person.z,person.complete?'#a1efbc':'#fff0ce',12);
+      if(distance<4.5)floating(person.complete?'Thank you, PING!':'E · Let’s talk',person.x,2.40,person.z,'#c8ede5',11);
+      ring(person.x,person.z,person.complete?'#8dddb9':'#e6c38b');
+    }
+  }
+  function robot() {
+    metrics.robotDraws++;
+    const mood=snapshot(),time=clock(),hop=mood.hopHeight;
+    const bob=reducedMotion?0:Math.sin(time*2.4)*.018+Math.abs(Math.sin(tick*4))*.047*movingAmount;
+    const stride=reducedMotion?0:Math.sin(tick*4)*.19*movingAmount;
+    const lift=bob+hop,smiling=mood.action!=='idle';
+    shadow(player.x,player.z,.47-hop*.14,.33-hop*.1);
+    const priorModel=modelTransform;
+    try {
+      localAt(player.x,player.z,player.dir,()=>{
+        const base=modelTransform;
+        softBox(0,.83+lift,0,.69,.58,.49,'#83d7c6',.13);
+        softBox(0,.57+lift,0,.49,.10,.40,'#e7d4b2',.045);
+        softBox(0,1.44+lift,.015,1.03,.72,.67,'#f1e5ce',.18);
+        softBox(0,1.44+lift,.365,.86,.49,.035,'#243e4b',.115);
+        softBox(0,.97+lift,-.31,.48,.42,.20,'#e9ba82',.08);
+        for(const side of [-1,1]){
+          softBox(side*.55,1.45+lift,0,.16,.30,.37,'#92cec3',.07);
+          softBox(side*.55,1.45+lift,.20,.09,.14,.025,'#f2ce99',.035);
+          softBox(side*.19,.31+hop,side*stride,.23,.41,.27,'#6295a4',.07);
+          softBox(side*.19,.115+hop,.075+side*stride,.33,.19,.43,'#edc68e',.075);
+          softBox(side*.19,.12+hop,.30+side*stride,.25,.07,.025,'#fff0ce',.025);
+          const waving=side===1&&mood.action==='wave';
+          const cheer=mood.action==='cheer'||mood.action==='hop';
+          const a=waving?2.5+(reducedMotion?0:Math.sin(mood.progress*22)*.27):cheer?side*2.25:side*stride*.8;
+          withTransform(v=>base([side*.44+v[0]*Math.cos(a)-v[1]*Math.sin(a),1.04+lift+v[0]*Math.sin(a)+v[1]*Math.cos(a),v[2]]),()=>{
+            softBox(0,-.14,0,.19,.35,.24,'#9edbd0',.06);
+            softBox(0,-.35,.025,.24,.19,.27,'#f3d4a2',.065);
+            box(0,-.35,.17,.13,.035,.025,['#fff2db']);
+          });
+        }
+        const blinking=(time%5.4)>5.2;
+        for(const side of [-1,1]){
+          const x=side*.22;
+          if(smiling&&!blinking){
+            line3([x-.075,1.47+lift,.391],[x,1.54+lift,.396],'#a3f5df',3.5);
+            line3([x,1.54+lift,.396],[x+.075,1.47+lift,.391],'#a3f5df',3.5);
+          }else{
+            softBox(x,1.49+lift,.392,.13,blinking?.025:.17,.015,'#a3f5df',.05);
+            if(!blinking)box(x-.025,1.53+lift,.405,.035,.045,.01,['#f6fff1']);
+          }
+          softBox(side*.31,1.34+lift,.39,.11,.045,.012,'#db9e98',.02);
+        }
+        line3([-.08,1.31+lift,.393],[0,1.28+lift,.4],'#b6f1dc',2);
+        line3([0,1.28+lift,.4],[.08,1.31+lift,.393],'#b6f1dc',2);
+        softBox(0,1.91+lift,0,.045,.25,.045,'#8daca7',.015);
+        softBox(0,2.06+lift,0,.17,.16,.17,smiling?'#efb194':'#e9c680',.055);
+        heart(0,.85+lift,.255,.25,'#fff0c9');
+        box(-.17,.68+lift,.258,.07,.025,.014,['#e5fff0']);
+        box(.17,.68+lift,.258,.07,.025,.014,['#e5fff0']);
+      });
+    } finally {modelTransform=priorModel;}
+    if(mood.action!=='idle'){
+      floating(mood.action==='wave'?'HELLO!':mood.action==='hop'?'HAPPY TO HELP!':'WE DID IT!',player.x,2.45+hop,player.z,'#ffe4ac',11);
+      if(!reducedMotion&&mood.action!=='wave')for(let i=0;i<5;i++){
+        const a=i*2.4+time,r=.65+Math.sin(time*3+i)*.1;
+        box(player.x+Math.cos(a)*r,1.4+Math.sin(a*2)*.5+hop,player.z+Math.sin(a)*r,.055,.055,.055,[i%2?'#f5ca8d':'#a4eed4']);
+      }
+    }
+    if(viewMode==='robot')floating('PING-BOT',player.x,2.27+lift,player.z,'#c5f8df',11);
+  }
+  function firstPersonFeedback() {
+    if(!started||opened||viewMode!=='first')return;
+    const mood=snapshot(); if(mood.action==='idle')return;
+    const progress=mood.remaining?mood.progress:.5;
+    ctx.save();
+    if(mood.action==='wave'){
+      const scale=Math.min(W/1100,H/740),motion=reducedMotion?0:Math.sin(progress*17)*.08;
+      ctx.translate(W*.19,H*.78+(reducedMotion?0:Math.sin(progress*Math.PI)*-35));
+      ctx.scale(scale,scale);ctx.rotate(-.18+motion);
+      ctx.fillStyle='#84cdbd';ctx.beginPath();ctx.roundRect(-31,20,69,145,18);ctx.fill();
+      ctx.fillStyle='#f0d2a2';ctx.beginPath();ctx.roundRect(-45,-53,94,98,22);ctx.fill();
+      for(let i=0;i<4;i++){ctx.beginPath();ctx.roundRect(-42+i*23,-88-(i===1||i===2?9:0),20,55,10);ctx.fill();}
+      ctx.fillStyle='#fff1d6';ctx.beginPath();ctx.roundRect(-28,-17,60,11,5);ctx.fill();
+    }else{
+      ctx.font='600 '+Math.max(12,Math.min(17,W/55))+'px system-ui';ctx.textAlign='center';
+      ctx.fillStyle='#ffe6b0';ctx.fillText(mood.action==='hop'?'♥  Happy to help!':'♥  One repair. A better day.',W/2,H*.62);
+    }
+    ctx.restore();
+  }
+  const oldScenery=drawScenery;
+  drawScenery=function(){oldScenery();scenery();};
+  drawRobot=robot;
+  const oldFirstPerson=drawFirstPerson;
+  drawFirstPerson=function(){oldFirstPerson();firstPersonFeedback();};
+  const style=document.createElement('style');
+  style.textContent='#botActions{display:flex;gap:5px;align-items:center;flex-shrink:0}#botActions button{background:#284c4a;border-color:#91bfb080;color:#e0f6dc;flex-shrink:0}#botActions kbd{font-size:9px;padding:1px 3px;background:#284948}#botActions button:disabled{opacity:.45}@media(max-width:900px){#botActions{gap:3px}}@media(max-width:550px){#botActions button{padding:6px;font-size:10px}#botActions kbd{display:none}}';
+  document.head.append(style);
+  const actions=document.createElement('div');actions.id='botActions';actions.setAttribute('aria-label','PING-BOT expressions');
+  for(const [id,label,key,name] of [['waveBot','Wave','Q','wave'],['hopBot','Happy hop','R','hop']]){
+    const b=document.createElement('button');b.id=id;b.innerHTML=label+' <kbd>'+key+'</kbd>';
+    b.setAttribute('aria-label',label+' ('+key+')');b.onclick=()=>action(name);actions.append(b);
+  }
+  $('bottom').append(actions);
+  addEventListener('keydown',e=>{
+    if(e.repeat||e.altKey||e.ctrlKey||e.metaKey||/INPUT|TEXTAREA|SELECT/.test(e.target.tagName))return;
+    const name=e.key.toLowerCase()==='q'?'wave':e.key.toLowerCase()==='r'?'hop':null;
+    if(name&&action(name))e.preventDefault();
+  });
+  window.CampusArt={draw:scenery,drawPerson,action,collisions,floorPolys:floorArt,get state(){return snapshot();}};
+})();
+
+// CAMPUS_MODULES_END
+
+let prior=performance.now();function update(now){const dt=Math.min((now-prior)/1000,.05);prior=now;movingAmount=0;if(started&&!opened){if(keys.has('arrowleft'))yaw+=dt*1.6;if(keys.has('arrowright'))yaw-=dt*1.6;let f=(keys.has('w')||keys.has('arrowup')?1:0)-(keys.has('s')||keys.has('arrowdown')?1:0),s=(keys.has('d')?1:0)-(keys.has('a')?1:0);if(f||s){const speed=(keys.has('shift')?5.2:3.3)*dt/Math.hypot(f,s);let nx=player.x+(-Math.sin(yaw)*f+Math.cos(yaw)*s)*speed,nz=player.z+(-Math.cos(yaw)*f-Math.sin(yaw)*s)*speed;nx=clamp(nx,-20,58);nz=clamp(nz,-7,7.5);if(!canWalk(nx,player.z))nx=player.x;if(!canWalk(nx,nz))nz=player.z;const blocked=false;if(!blocked){const dx=nx-player.x,dz=nz-player.z;if(Math.hypot(dx,dz)>.00001){const targetDir=Math.atan2(dx,dz),turn=Math.atan2(Math.sin(targetDir-player.dir),Math.cos(targetDir-player.dir));player.dir+=turn*(1-Math.exp(-18*dt));tick+=dt*3;movingAmount=1;travelStep(Math.hypot(dx,dz))}player.x=nx;player.z=nz}}}cameraFollow.x+=(player.x-cameraFollow.x)*(1-Math.exp(-8*dt));cameraFollow.z+=(player.z-cameraFollow.z)*(1-Math.exp(-8*dt));updateFeedback(dt);updateGuide();const n=nearest();$('prompt').style.display=n&&!opened&&started?'block':'none';if(n)$('prompt').textContent='[ E ] '+(n.kind==='customer'?'TALK TO ':'INSPECT ')+n.title.split(' · ')[0];draw();requestAnimationFrame(update)}requestAnimationFrame(update);
+</script></body></html>
